@@ -118,9 +118,9 @@ a {
 }
 
 .hero h1 {
-  font-size: clamp(2.9rem, 6vw, 5.2rem);
+  font-size: clamp(2.65rem, 5.1vw, 4.65rem);
   margin-bottom: 20px;
-  max-width: 820px;
+  max-width: 760px;
 }
 
 .hero-copy {
@@ -458,6 +458,10 @@ a {
     padding: 72px 20px;
   }
 
+  .hero h1 {
+    font-size: clamp(2.35rem, 12vw, 3.7rem);
+  }
+
   .hero-visual-card,
   .hero-visual-card img {
     min-height: 290px;
@@ -465,5 +469,197 @@ a {
 
   .image-card img {
     height: 200px;
+  }
+}
+
+
+/* Premium automotive micro-animations */
+.hero-visual-card {
+  animation: floatHero 7s ease-in-out infinite;
+}
+
+.hero-visual-card::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background:
+    radial-gradient(circle at 30% 40%, rgba(109, 255, 224, 0.12), transparent 28%),
+    radial-gradient(circle at 75% 60%, rgba(255, 122, 24, 0.08), transparent 24%);
+  animation: ambientGlow 9s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.hero-visual-card img {
+  position: relative;
+  z-index: 1;
+  transform: scale(1.02);
+  animation: heroZoom 12s ease-in-out infinite alternate;
+}
+
+.scan-line {
+  position: absolute;
+  left: -40%;
+  top: 0;
+  width: 38%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(109, 255, 224, 0.16), transparent);
+  transform: skewX(-16deg);
+  animation: scanMove 5.5s ease-in-out infinite;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.pulse-node {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 22px rgba(109, 255, 224, 0.9);
+  z-index: 4;
+  opacity: 0.85;
+  animation: nodePulse 2.8s ease-in-out infinite;
+}
+
+.node-one {
+  left: 30%;
+  top: 48%;
+  animation-delay: 0s;
+}
+
+.node-two {
+  right: 28%;
+  top: 38%;
+  animation-delay: 0.7s;
+}
+
+.node-three {
+  right: 18%;
+  bottom: 30%;
+  animation-delay: 1.4s;
+}
+
+.hero-card-overlay {
+  z-index: 5;
+}
+
+.status-line {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 8px;
+  height: 4px;
+  margin-bottom: 2px;
+  overflow: hidden;
+}
+
+.status-line span {
+  flex: 1;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(109,255,224,0.15), rgba(109,255,224,0.9), rgba(255,122,24,0.75));
+  animation: signalSweep 1.9s ease-in-out infinite;
+  transform-origin: left;
+}
+
+.status-line span:nth-child(2) { animation-delay: 0.12s; }
+.status-line span:nth-child(3) { animation-delay: 0.24s; }
+.status-line span:nth-child(4) { animation-delay: 0.36s; }
+.status-line span:nth-child(5) { animation-delay: 0.48s; }
+
+.metric {
+  transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+.metric:hover,
+.card:hover,
+.project-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(109, 255, 224, 0.35);
+}
+
+.card,
+.project-card {
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+@keyframes floatHero {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes ambientGlow {
+  0% {
+    transform: translate3d(-2%, -2%, 0) rotate(0deg);
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate3d(3%, 2%, 0) rotate(5deg);
+    opacity: 1;
+  }
+}
+
+@keyframes heroZoom {
+  0% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1.055);
+  }
+}
+
+@keyframes scanMove {
+  0%, 18% {
+    left: -45%;
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  62%, 100% {
+    left: 110%;
+    opacity: 0;
+  }
+}
+
+@keyframes nodePulse {
+  0%, 100% {
+    transform: scale(0.9);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scale(1.8);
+    opacity: 0.95;
+  }
+}
+
+@keyframes signalSweep {
+  0%, 100% {
+    transform: scaleX(0.25);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-visual-card,
+  .hero-visual-card img,
+  .hero-visual-card::before,
+  .scan-line,
+  .pulse-node,
+  .status-line span {
+    animation: none;
+  }
+
+  .metric:hover,
+  .card:hover,
+  .project-card:hover {
+    transform: none;
   }
 }
