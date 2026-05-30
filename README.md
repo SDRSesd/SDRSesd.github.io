@@ -1,43 +1,48 @@
-# Professional Portfolio Website
+# Professional Automotive Embedded Systems Portfolio
 
-This is a static GitHub Pages website.
+This is a static portfolio website built with HTML, CSS, and JavaScript.
 
-## Edit files
+## Structure
 
-Use VS Code, Notepad++, or GitHub web editor.
+- `index.html` - Main website content
+- `style.css` - Layout, colors, responsive design, and visual styling
+- `script.js` - Mobile navigation behavior
+- `assets/` - Website images and visual assets
 
-Main file to edit:
+## Editing
 
-- `index.html` - name, content, email, GitHub link, project text
-- `style.css` - colors, spacing, fonts, design
-- `script.js` - mobile menu
+Update `index.html` to change:
 
-## Current edited name
+- Name and title
+- Profile summary
+- Skill sections
+- Project descriptions
+- Email and GitHub profile link
 
-`Shivadurgarajasekar Selvaraj`
+Update `style.css` to change:
 
-## Important edit before publishing
+- Colors
+- Spacing
+- Card layouts
+- Image sizing
+- Mobile responsiveness
 
-In `index.html`, replace:
+## Publishing
 
-```html
-https://github.com/your-github-username
+This website can be published using GitHub Pages.
+
+Recommended repository name:
+
+```text
+SDRSesd.github.io
 ```
 
-with your real GitHub profile link.
+After making changes locally:
 
-## Publish with GitHub Pages
+1. Commit the changes in GitHub Desktop.
+2. Push to GitHub.
+3. GitHub Pages will redeploy the website automatically.
 
-1. Create a new repository in GitHub.
-2. Upload `index.html`, `style.css`, `script.js`, and `README.md`.
-3. Go to **Settings → Pages**.
-4. Select:
-   - Source: `Deploy from a branch`
-   - Branch: `main`
-   - Folder: `/root`
-5. Click **Save**.
+## Notes
 
-
-## Visual assets
-
-The `assets/` folder contains original AI-generated/copyright-safe automotive, embedded systems, CAN telemetry, EV control, and cybersecurity visuals used in the portfolio.
+Do not add private data, passwords, API keys, or personal documents to this repository.
