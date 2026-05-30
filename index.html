@@ -37,10 +37,60 @@
           <a href="#contact" class="btn secondary">Let’s Connect</a>
         </div>
 
-        <div class="hero-metrics">
-          <div class="status-line">
-            <span></span><span></span><span></span><span></span><span></span>
+        <div class="hero-tech-row">
+          <div class="ecu-flow-card">
+            <div class="tech-card-head">
+              <span>Vehicle Network Activity</span>
+              <strong>ECU / CAN FD Signal Flow</strong>
+            </div>
+            <div class="flow-track">
+              <div class="flow-line"></div>
+              <div class="flow-node n1"><span>ECU</span></div>
+              <div class="flow-node n2"><span>CAN FD</span></div>
+              <div class="flow-node n3"><span>BCM</span></div>
+              <div class="flow-node n4"><span>TCU</span></div>
+              <div class="flow-node n5"><span>BMS</span></div>
+              <div class="flow-pulse p1"></div>
+              <div class="flow-pulse p2"></div>
+              <div class="flow-pulse p3"></div>
+            </div>
           </div>
+
+          <div class="rpm-gauge-card" id="rpmGaugeCard">
+            <div class="tech-card-head">
+              <span>Powertrain Response</span>
+              <strong>RPM / Redline Gauge</strong>
+            </div>
+            <div class="rpm-gauge-wrap">
+              <svg class="rpm-svg" viewBox="0 0 260 160" aria-hidden="true">
+                <path d="M30 130 A100 100 0 0 1 230 130" class="gauge-base"></path>
+                <path d="M30 130 A100 100 0 0 1 170 38" class="gauge-active"></path>
+                <path d="M170 38 A100 100 0 0 1 230 130" class="gauge-redline"></path>
+
+                <g class="tick-labels">
+                  <text x="34" y="140">0</text>
+                  <text x="54" y="92">2</text>
+                  <text x="95" y="56">4</text>
+                  <text x="145" y="56">6</text>
+                  <text x="188" y="92">8</text>
+                </g>
+
+                <g id="rpmNeedleWrap" class="needle-wrap">
+                  <line x1="130" y1="120" x2="70" y2="52" class="needle"></line>
+                  <circle cx="130" cy="120" r="7" class="needle-center"></circle>
+                </g>
+              </svg>
+
+              <div class="rpm-readout">
+                <strong id="rpmValue">3200</strong>
+                <span>RPM</span>
+              </div>
+            </div>
+            <p class="rpm-note">Idle sweep active • hover or tap to redline</p>
+          </div>
+        </div>
+
+        <div class="hero-metrics">
           <div class="metric">
             <strong>Embedded</strong>
             <span>Firmware, control logic, diagnostics, validation</span>

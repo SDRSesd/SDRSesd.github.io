@@ -663,3 +663,250 @@ a {
     transform: none;
   }
 }
+
+
+/* Automotive technical hero animations */
+.hero-tech-row {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 14px;
+  margin-top: 24px;
+  margin-bottom: 18px;
+}
+
+.ecu-flow-card,
+.rpm-gauge-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 18px 18px 16px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+}
+
+.tech-card-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.tech-card-head span {
+  color: var(--accent);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tech-card-head strong {
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.flow-track {
+  position: relative;
+  height: 88px;
+  overflow: hidden;
+}
+
+.flow-line {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  top: 36px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(109,255,224,0.16), rgba(109,255,224,0.85), rgba(255,122,24,0.75));
+  box-shadow: 0 0 16px rgba(109,255,224,0.16);
+}
+
+.flow-node {
+  position: absolute;
+  top: 27px;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #0c182d;
+  border: 2px solid rgba(109,255,224,0.7);
+  box-shadow: 0 0 16px rgba(109,255,224,0.3);
+}
+
+.flow-node::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.flow-node span {
+  position: absolute;
+  top: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: 0.77rem;
+  font-weight: 700;
+}
+
+.n1 { left: 24px; }
+.n2 { left: 24%; }
+.n3 { left: 46%; }
+.n4 { left: 68%; }
+.n5 { right: 24px; }
+
+.flow-pulse {
+  position: absolute;
+  top: 31px;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 0 20px rgba(109,255,224,0.8);
+  opacity: 0;
+}
+
+.p1 { animation: canTravel 3.2s linear infinite; }
+.p2 { animation: canTravel 3.2s linear infinite 1s; }
+.p3 { animation: canTravel 3.2s linear infinite 2s; }
+
+.rpm-gauge-wrap {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.rpm-svg {
+  width: 100%;
+  height: auto;
+  max-width: 230px;
+}
+
+.gauge-base,
+.gauge-active,
+.gauge-redline {
+  fill: none;
+  stroke-linecap: round;
+  stroke-width: 12;
+}
+
+.gauge-base {
+  stroke: rgba(255,255,255,0.10);
+}
+
+.gauge-active {
+  stroke: rgba(109,255,224,0.92);
+  filter: drop-shadow(0 0 10px rgba(109,255,224,0.45));
+}
+
+.gauge-redline {
+  stroke: rgba(255,82,82,0.92);
+  filter: drop-shadow(0 0 10px rgba(255,82,82,0.35));
+}
+
+.tick-labels text {
+  fill: rgba(255,255,255,0.78);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.needle-wrap {
+  transform-origin: 130px 120px;
+  transition: transform 0.12s linear;
+}
+
+.needle {
+  stroke: #f5f7fb;
+  stroke-width: 5;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,0.18));
+}
+
+.needle-center {
+  fill: var(--accent);
+  filter: drop-shadow(0 0 10px rgba(109,255,224,0.4));
+}
+
+.rpm-readout {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 72px;
+}
+
+.rpm-readout strong {
+  font-size: 1.7rem;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.rpm-readout span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.rpm-note {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.rpm-gauge-card.is-redline {
+  border-color: rgba(255,82,82,0.45);
+  box-shadow: 0 0 0 1px rgba(255,82,82,0.16), 0 20px 60px rgba(0,0,0,0.36);
+}
+
+.rpm-gauge-card.is-redline .rpm-readout strong,
+.rpm-gauge-card.is-redline .rpm-note {
+  color: #ff8e8e;
+}
+
+@keyframes canTravel {
+  0% {
+    left: 18px;
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  10% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    left: calc(100% - 24px);
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+
+@media (max-width: 1080px) {
+  .hero-tech-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 860px) {
+  .rpm-gauge-wrap {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+
+  .rpm-readout {
+    align-items: flex-start;
+  }
+
+  .flow-track {
+    height: 96px;
+  }
+}
