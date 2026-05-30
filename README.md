@@ -1,48 +1,32 @@
-# Professional Automotive Embedded Systems Portfolio
+# Premium Automotive Embedded Systems Portfolio
 
 This is a static portfolio website built with HTML, CSS, and JavaScript.
 
-## Structure
+## Direction
 
-- `index.html` - Main website content
-- `style.css` - Layout, colors, responsive design, and visual styling
-- `script.js` - Mobile navigation behavior
-- `assets/` - Website images and visual assets
+This version combines two themes in one coherent portfolio style:
 
-## Editing
+- a premium top-MNC engineering portfolio look
+- a motorsport / performance ECU enthusiast perspective
 
-Update `index.html` to change:
+## Focus Areas
 
-- Name and title
-- Profile summary
-- Skill sections
-- Project descriptions
-- Email and GitHub profile link
+- EV and hybrid embedded systems
+- ECU architecture and embedded firmware
+- CAN / CAN FD communication
+- Telemetry, diagnostics, and HMI workflows
+- ECU tuning, calibration, and remapping interest
+- Secure ECU communication with AES-128 CMAC concepts
+- Security-oriented embedded systems design
 
-Update `style.css` to change:
+## Files
 
-- Colors
-- Spacing
-- Card layouts
-- Image sizing
-- Mobile responsiveness
-
-## Publishing
-
-This website can be published using GitHub Pages.
-
-Recommended repository name:
-
-```text
-SDRSesd.github.io
-```
-
-After making changes locally:
-
-1. Commit the changes in GitHub Desktop.
-2. Push to GitHub.
-3. GitHub Pages will redeploy the website automatically.
+- `index.html` - content and website structure
+- `style.css` - visual design, layout, backgrounds, and responsive styling
+- `script.js` - navigation toggle and footer year
+- `assets/` - images and background visuals
 
 ## Notes
 
-Do not add private data, passwords, API keys, or personal documents to this repository.
+Update the GitHub link or email in `index.html` if needed before publishing.
+Do not add passwords, API keys, or private credentials to this repository.
