@@ -317,3 +317,84 @@ code {
     padding: 70px 20px;
   }
 }
+
+
+/* Professional automotive visuals */
+.hero-visual-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  box-shadow: var(--shadow);
+  min-height: 360px;
+}
+
+.hero-visual-card img {
+  width: 100%;
+  height: 100%;
+  min-height: 360px;
+  object-fit: cover;
+  display: block;
+  opacity: 0.95;
+}
+
+.hero-card-overlay {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(11, 16, 32, 0.78);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+}
+
+.hero-card-overlay span {
+  display: block;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.hero-card-overlay strong {
+  display: block;
+  color: var(--text);
+  font-size: 1.05rem;
+}
+
+.image-projects {
+  align-items: stretch;
+}
+
+.project-card.image-card {
+  overflow: hidden;
+  padding: 0;
+}
+
+.image-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+  border-bottom: 1px solid var(--border);
+}
+
+.project-content {
+  padding: 24px;
+}
+
+@media (max-width: 860px) {
+  .hero-visual-card,
+  .hero-visual-card img {
+    min-height: 280px;
+  }
+
+  .image-card img {
+    height: 190px;
+  }
+}

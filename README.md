@@ -1,4 +1,4 @@
-# Shivadurgarajasekar Selvaraj Portfolio Website
+# Professional Portfolio Website
 
 This is a static GitHub Pages website.
 
@@ -36,3 +36,8 @@ with your real GitHub profile link.
    - Branch: `main`
    - Folder: `/root`
 5. Click **Save**.
+
+
+## Visual assets
+
+The `assets/` folder contains original AI-generated/copyright-safe automotive, embedded systems, CAN telemetry, EV control, and cybersecurity visuals used in the portfolio.
