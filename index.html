@@ -56,78 +56,40 @@
             </div>
           </div>
 
-          
-          <div class="rpm-gauge-card performance-cluster-card" id="rpmGaugeCard">
+          <div class="rpm-gauge-card" id="rpmGaugeCard">
             <div class="tech-card-head">
-              <span>Performance Cluster</span>
-              <strong>Digital Speed + RPM + Launch Control</strong>
+              <span>Powertrain Response</span>
+              <strong>RPM / Redline Gauge</strong>
             </div>
+            <div class="rpm-gauge-wrap">
+              <svg class="rpm-svg" viewBox="0 0 260 160" aria-hidden="true">
+                <path d="M30 130 A100 100 0 0 1 230 130" class="gauge-base"></path>
+                <path d="M30 130 A100 100 0 0 1 170 38" class="gauge-active"></path>
+                <path d="M170 38 A100 100 0 0 1 230 130" class="gauge-redline"></path>
 
-            <div class="cluster-top">
-              <div class="analog-panel">
-                <svg class="rpm-svg" viewBox="0 0 260 160" aria-hidden="true">
-                  <path d="M30 130 A100 100 0 0 1 230 130" class="gauge-base"></path>
-                  <path d="M30 130 A100 100 0 0 1 170 38" class="gauge-active"></path>
-                  <path d="M170 38 A100 100 0 0 1 230 130" class="gauge-redline"></path>
+                <g class="tick-labels">
+                  <text x="34" y="140">0</text>
+                  <text x="54" y="92">2</text>
+                  <text x="95" y="56">4</text>
+                  <text x="145" y="56">6</text>
+                  <text x="188" y="92">8</text>
+                </g>
 
-                  <g class="tick-labels">
-                    <text x="34" y="140">0</text>
-                    <text x="54" y="92">2</text>
-                    <text x="95" y="56">4</text>
-                    <text x="145" y="56">6</text>
-                    <text x="188" y="92">8</text>
-                  </g>
+                <g id="rpmNeedleWrap" class="needle-wrap">
+                  <line x1="130" y1="120" x2="70" y2="52" class="needle"></line>
+                  <circle cx="130" cy="120" r="7" class="needle-center"></circle>
+                </g>
+              </svg>
 
-                  <g id="rpmNeedleWrap" class="needle-wrap">
-                    <line x1="130" y1="120" x2="70" y2="52" class="needle"></line>
-                    <circle cx="130" cy="120" r="7" class="needle-center"></circle>
-                  </g>
-                </svg>
-
-                <div class="rpm-readout">
-                  <strong id="rpmValue">2400</strong>
-                  <span>RPM</span>
-                </div>
-              </div>
-
-              <div class="digital-cluster">
-                <div class="speed-card">
-                  <span>Speed</span>
-                  <strong><em id="speedValue">000</em> km/h</strong>
-                </div>
-
-                <div class="mini-cluster-row">
-                  <div class="cluster-mini-box">
-                    <span>Gear</span>
-                    <strong id="gearValue">N</strong>
-                  </div>
-                  <div class="cluster-mini-box">
-                    <span>Mode</span>
-                    <strong id="clusterMode">IDLE</strong>
-                  </div>
-                </div>
-
-                <div class="boost-card">
-                  <div class="boost-head">
-                    <span>Boost</span>
-                    <strong id="boostValue">0.0 bar</strong>
-                  </div>
-                  <div class="boost-bar">
-                    <i id="boostFill"></i>
-                  </div>
-                </div>
+              <div class="rpm-readout">
+                <strong id="rpmValue">3200</strong>
+                <span>RPM</span>
               </div>
             </div>
-
-            <div class="cluster-actions">
-              <button class="cluster-btn" id="launchBtn" type="button">Launch Control Demo</button>
-              <button class="cluster-btn secondary" id="blipBtn" type="button">Rev-Match Blip</button>
-              <button class="audio-toggle" id="audioToggle" type="button">Enable Engine Audio</button>
-            </div>
-
-            <p class="rpm-note" id="clusterNote">Idle sweep active • launch-control and rev-match animation ready</p>
+            <button class="audio-toggle" id="audioToggle" type="button">Enable Engine Audio</button>
+            <p class="rpm-note">Turbo ICE idle sweep active • hover or tap to redline • release triggers overrun crackles</p>
           </div>
-
+        </div>
 
         <div class="hero-metrics">
           <div class="metric">
