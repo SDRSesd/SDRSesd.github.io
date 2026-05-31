@@ -1943,3 +1943,136 @@ svg {
   touch-action: manipulation;
   user-select: none;
 }
+
+
+/* Motorsport engine controls */
+.motorsport-status {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 12px 0 12px;
+}
+
+.motorsport-status > div {
+  padding: 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+}
+
+.motorsport-status span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.motorsport-status strong {
+  display: block;
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.motorsport-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.control-btn,
+.pedal-btn,
+.drive-btn,
+.start-btn {
+  min-height: 42px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(109,255,224,0.35);
+  background: rgba(109,255,224,0.08);
+  color: var(--text);
+  font-weight: 800;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.control-btn:hover,
+.audio-toggle:hover {
+  transform: translateY(-1px);
+  border-color: rgba(109,255,224,0.65);
+  background: rgba(109,255,224,0.14);
+}
+
+.start-btn.is-running {
+  border-color: rgba(255,122,24,0.52);
+  background: rgba(255,122,24,0.14);
+}
+
+.drive-btn.is-drive {
+  border-color: rgba(137,174,252,0.60);
+  background: rgba(137,174,252,0.12);
+}
+
+.pedal-btn.is-pressed {
+  border-color: rgba(255,82,82,0.55);
+  background: rgba(255,82,82,0.14);
+}
+
+.audio-toggle {
+  width: 100%;
+  min-width: 0;
+}
+
+.throttle-visual {
+  margin-top: 12px;
+}
+
+.throttle-visual span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.throttle-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+
+.throttle-bar i {
+  display: block;
+  width: 0%;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-3), #ff4d4d);
+  box-shadow: 0 0 16px rgba(109,255,224,0.35);
+  transition: width 0.12s linear;
+}
+
+.rpm-gauge-card.engine-running {
+  border-color: rgba(109,255,224,0.28);
+}
+
+.rpm-gauge-card.drive-active {
+  box-shadow: 0 0 0 1px rgba(137,174,252,0.14), 0 20px 60px rgba(0,0,0,0.36);
+}
+
+@media (max-width: 860px) {
+  .motorsport-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .motorsport-status {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

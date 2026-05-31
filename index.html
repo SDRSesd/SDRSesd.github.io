@@ -60,7 +60,7 @@
           <div class="rpm-gauge-card" id="rpmGaugeCard">
             <div class="tech-card-head">
               <span>Powertrain Response</span>
-              <strong>RPM / Redline Gauge</strong>
+              <strong>Motorsport RPM / Drive Control</strong>
             </div>
             <div class="rpm-gauge-wrap">
               <svg class="rpm-svg" viewBox="0 0 260 160" aria-hidden="true">
@@ -85,8 +85,34 @@
                 <span>RPM</span>
               </div>
             </div>
-            <button class="audio-toggle" id="audioToggle" type="button" aria-pressed="false">Engine Audio: Off</button>
-            <p class="rpm-note">Turbo ICE idle sweep active • hover or tap to redline • release triggers overrun crackles</p>
+            <div class="motorsport-status">
+              <div>
+                <span>Engine</span>
+                <strong id="engineStatus">OFF</strong>
+              </div>
+              <div>
+                <span>Mode</span>
+                <strong id="driveModeStatus">N</strong>
+              </div>
+              <div>
+                <span>Gear</span>
+                <strong id="gearStatus">N</strong>
+              </div>
+            </div>
+
+            <div class="motorsport-controls">
+              <button class="control-btn start-btn" id="engineStartBtn" type="button" aria-pressed="false">Engine Start</button>
+              <button class="control-btn drive-btn" id="driveModeBtn" type="button" aria-pressed="false">Drive: Off</button>
+              <button class="control-btn pedal-btn" id="acceleratorBtn" type="button" aria-pressed="false">Hold Accelerator</button>
+              <button class="audio-toggle" id="audioToggle" type="button" aria-pressed="false">Audio: Off</button>
+            </div>
+
+            <div class="throttle-visual">
+              <span>Throttle</span>
+              <div class="throttle-bar"><i id="throttleFill"></i></div>
+            </div>
+
+            <p class="rpm-note" id="rpmNote">Start engine first • Neutral keeps free-rev mode • Drive enables rolling pull with auto gearshift</p>
           </div>
         </div>
 
