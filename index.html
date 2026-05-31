@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="description" content="Portfolio website for Shivadurgarajasekar Selvaraj - Senior Automotive Embedded Systems Engineer with focus on EV platforms, ECU architecture, CAN / CAN FD, secure embedded systems, diagnostics, telematics, and performance-oriented automotive engineering." />
   <title>Shivadurgarajasekar Selvaraj | Senior Automotive Embedded Systems Engineer</title>
   <link rel="stylesheet" href="style.css" />
@@ -87,7 +87,7 @@
                 <span>RPM</span>
               </div>
             </div>
-            <button class="audio-toggle" id="audioToggle" type="button">Engine Audio: Off</button>
+            <button class="audio-toggle" id="audioToggle" type="button" aria-pressed="false">Engine Audio: Off</button>
             <p class="rpm-note">Turbo ICE idle sweep active • hover or tap to redline • release triggers overrun crackles</p>
           </div>
         </div>
@@ -108,13 +108,18 @@
         </div>
       </div>
 
-      <div class="hero-visual-stack">
-        <div class="hero-portrait-panel">
-          <div class="portrait-glow"></div>
-          <img src="assets/shiva-portrait-blend.png" alt="Portrait of Shivadurgarajasekar Selvaraj" class="hero-portrait" />
+      <div class="hero-visual-stack clean-hero-stack">
+        <div class="hero-profile-card">
+          <div class="profile-image-frame">
+            <img src="assets/shiva-portrait-blend.png" alt="Portrait of Shivadurgarajasekar Selvaraj" class="hero-portrait" />
+          </div>
+          <div class="profile-card-copy">
+            <span>Senior Automotive Embedded Systems Engineer</span>
+            <strong>EV • ECU • CAN FD • Secure Automotive Platforms</strong>
+          </div>
         </div>
 
-        <div class="hero-visual-card">
+        <div class="hero-visual-card compact-auto-visual">
           <div class="scan-line"></div>
           <div class="pulse-node node-one"></div>
           <div class="pulse-node node-two"></div>

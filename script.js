@@ -49,6 +49,7 @@ function updateAudioButton() {
   if (!audioToggle) return;
   audioToggle.classList.toggle("is-active", audioEnabled);
   audioToggle.textContent = audioEnabled ? "Engine Audio: On" : "Engine Audio: Off";
+  audioToggle.setAttribute("aria-pressed", audioEnabled ? "true" : "false");
 }
 
 function setGauge(rpm) {
@@ -204,9 +205,15 @@ function triggerBurst() {
 
 if (audioToggle) {
   updateAudioButton();
-  audioToggle.addEventListener("click", async () => {
+  audioToggle.addEventListener("click", async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
     await setAudioEnabled(!audioEnabled);
   });
+
+  audioToggle.addEventListener("touchstart", (event) => {
+    event.stopPropagation();
+  }, { passive: true });
 }
 
 if (gaugeCard) {
@@ -224,14 +231,16 @@ if (gaugeCard) {
     mode = "idle";
   });
 
-  gaugeCard.addEventListener("touchstart", async () => {
+  gaugeCard.addEventListener("touchstart", async (event) => {
+    if (event.target.closest("button")) return;
     if (audioEnabled && audioCtx && audioCtx.state === "suspended") {
       await audioCtx.resume();
     }
     triggerBurst();
   }, { passive: true });
 
-  gaugeCard.addEventListener("click", async () => {
+  gaugeCard.addEventListener("click", async (event) => {
+    if (event.target.closest("button")) return;
     if (audioEnabled && audioCtx && audioCtx.state === "suspended") {
       await audioCtx.resume();
     }
