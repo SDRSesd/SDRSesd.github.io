@@ -26,6 +26,7 @@ const audioToggle = document.getElementById("audioToggle");
 let mode = "idle";
 let burstUntil = 0;
 let audioReady = false;
+let audioEnabled = false;
 let audioCtx = null;
 let engineGain = null;
 let engineFilter = null;
@@ -35,12 +36,19 @@ let turboGain = null;
 let turboFilter = null;
 let turboNoise = null;
 let masterGain = null;
+const MAX_MASTER_GAIN = 0.38;
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
 function rpmToAngle(rpm) {
   const limited = clamp(rpm, 0, 8500);
   return -120 + (limited / 8500) * 240;
+}
+
+function updateAudioButton() {
+  if (!audioToggle) return;
+  audioToggle.classList.toggle("is-active", audioEnabled);
+  audioToggle.textContent = audioEnabled ? "Engine Audio: On" : "Engine Audio: Off";
 }
 
 function setGauge(rpm) {
@@ -67,7 +75,7 @@ function ensureAudio() {
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
   masterGain = audioCtx.createGain();
-  masterGain.gain.value = 0.38;
+  masterGain.gain.value = 0;
   masterGain.connect(audioCtx.destination);
 
   engineFilter = audioCtx.createBiquadFilter();
@@ -108,30 +116,43 @@ function ensureAudio() {
   oscA.start();
   oscB.start();
   turboNoise.start();
-
   audioReady = true;
-  if (audioToggle) {
-    audioToggle.classList.add("is-active");
-    audioToggle.textContent = "Engine Audio On";
+}
+
+async function setAudioEnabled(enabled) {
+  ensureAudio();
+  if (audioCtx && audioCtx.state === "suspended") {
+    await audioCtx.resume();
   }
+  audioEnabled = enabled;
+  if (masterGain && audioCtx) {
+    masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+    masterGain.gain.setTargetAtTime(audioEnabled ? MAX_MASTER_GAIN : 0, audioCtx.currentTime, 0.03);
+  }
+  updateAudioButton();
 }
 
 function updateAudio(rpm) {
   if (!audioReady || !audioCtx) return;
+
   const now = audioCtx.currentTime;
   const baseHz = 42 + rpm / 88;
   const harmonicHz = baseHz * 1.98;
+
   oscA.frequency.setTargetAtTime(baseHz, now, 0.04);
   oscB.frequency.setTargetAtTime(harmonicHz, now, 0.04);
+
   engineFilter.frequency.setTargetAtTime(260 + rpm / 6, now, 0.06);
   engineGain.gain.setTargetAtTime(0.03 + rpm / 85000, now, 0.04);
+
   const spoolFactor = clamp((rpm - 3500) / 4500, 0, 1);
   turboFilter.frequency.setTargetAtTime(700 + spoolFactor * 1600, now, 0.08);
   turboGain.gain.setTargetAtTime(spoolFactor * 0.045, now, 0.08);
 }
 
 function makePopBang(strength = 1) {
-  if (!audioReady || !audioCtx) return;
+  if (!audioReady || !audioCtx || !audioEnabled) return;
+
   const now = audioCtx.currentTime;
   const duration = 0.14 + Math.random() * 0.1;
 
@@ -169,7 +190,7 @@ function makePopBang(strength = 1) {
 }
 
 function triggerOverrunPops() {
-  if (!audioReady) return;
+  if (!audioEnabled) return;
   const count = 2 + Math.floor(Math.random() * 2);
   for (let i = 0; i < count; i += 1) {
     setTimeout(() => makePopBang(0.8 + Math.random() * 0.3), i * (90 + Math.random() * 70));
@@ -182,17 +203,15 @@ function triggerBurst() {
 }
 
 if (audioToggle) {
+  updateAudioButton();
   audioToggle.addEventListener("click", async () => {
-    ensureAudio();
-    if (audioCtx && audioCtx.state === "suspended") {
-      await audioCtx.resume();
-    }
+    await setAudioEnabled(!audioEnabled);
   });
 }
 
 if (gaugeCard) {
   gaugeCard.addEventListener("mouseenter", async () => {
-    if (audioCtx && audioCtx.state === "suspended") {
+    if (audioEnabled && audioCtx && audioCtx.state === "suspended") {
       await audioCtx.resume();
     }
     mode = "hover";
@@ -206,14 +225,14 @@ if (gaugeCard) {
   });
 
   gaugeCard.addEventListener("touchstart", async () => {
-    if (audioCtx && audioCtx.state === "suspended") {
+    if (audioEnabled && audioCtx && audioCtx.state === "suspended") {
       await audioCtx.resume();
     }
     triggerBurst();
   }, { passive: true });
 
   gaugeCard.addEventListener("click", async () => {
-    if (audioCtx && audioCtx.state === "suspended") {
+    if (audioEnabled && audioCtx && audioCtx.state === "suspended") {
       await audioCtx.resume();
     }
     triggerBurst();
@@ -222,6 +241,7 @@ if (gaugeCard) {
 
 function animateGauge(timestamp) {
   let rpm = 3200;
+
   if (mode === "hover") {
     rpm = 7700 + 260 * Math.sin(timestamp / 90);
   } else if (mode === "burst") {
@@ -236,9 +256,11 @@ function animateGauge(timestamp) {
       rpm = rise + 180 * Math.sin(timestamp / 85);
     }
   }
+
   if (mode === "idle") {
     rpm = 2350 + 360 * Math.sin(timestamp / 720) + 110 * Math.sin(timestamp / 1950);
   }
+
   setGauge(rpm);
   requestAnimationFrame(animateGauge);
 }
