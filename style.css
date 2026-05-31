@@ -1697,3 +1697,148 @@ svg {
     min-width: 0;
   }
 }
+
+
+/* Realistic tachometer upgrade */
+.tachometer-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+}
+
+.tach-svg {
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+  overflow: visible;
+}
+
+.tach-bezel {
+  fill: #05080d;
+  stroke: rgba(255,255,255,0.08);
+  stroke-width: 2;
+}
+
+.tach-ring {
+  fill: url(#tachRingGradient);
+  stroke: rgba(255,255,255,0.10);
+  stroke-width: 1.4;
+}
+
+.tach-face {
+  fill: url(#tachFaceGradient);
+  stroke: rgba(255,255,255,0.06);
+  stroke-width: 1;
+}
+
+.tach-carbon {
+  fill: url(#tachCarbonPattern);
+  opacity: 0.52;
+}
+
+.tach-normal-arc,
+.tach-redline-arc {
+  fill: none;
+  stroke-linecap: round;
+  stroke-width: 7;
+}
+
+.tach-normal-arc {
+  stroke: rgba(109,255,224,0.9);
+  filter: drop-shadow(0 0 8px rgba(109,255,224,0.28));
+}
+
+.tach-redline-arc {
+  stroke: rgba(255,92,92,0.92);
+  filter: drop-shadow(0 0 8px rgba(255,92,92,0.28));
+}
+
+.tach-tick {
+  stroke: rgba(255,255,255,0.68);
+  stroke-linecap: round;
+}
+
+.tach-tick.minor {
+  stroke-width: 1.5;
+  opacity: 0.55;
+}
+
+.tach-tick.major {
+  stroke-width: 2.8;
+}
+
+.tach-label {
+  fill: rgba(255,255,255,0.88);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.tach-title {
+  fill: rgba(255,255,255,0.92);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.tach-subtitle {
+  fill: rgba(255,255,255,0.52);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.tach-inline-value {
+  fill: rgba(255,255,255,0.96);
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.tach-needle {
+  stroke: #eb5548;
+  stroke-width: 6;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 5px rgba(235,85,72,0.35));
+  transition: x2 0.12s linear, y2 0.12s linear;
+}
+
+.tach-center-cap {
+  fill: #1b2028;
+  stroke: rgba(255,255,255,0.18);
+  stroke-width: 1.2;
+}
+
+.tach-center-dot {
+  fill: #c8ccd1;
+}
+
+.tach-readout {
+  min-width: 88px;
+}
+
+.tach-readout strong {
+  font-size: 2rem;
+}
+
+.tach-readout small {
+  display: block;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 860px) {
+  .tachometer-layout {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .tach-readout {
+    align-items: center;
+    text-align: center;
+    min-width: 0;
+  }
+}
