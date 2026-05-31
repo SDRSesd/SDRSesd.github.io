@@ -1598,3 +1598,52 @@ svg {
 .profile-image-frame::after {
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.0));
 }
+
+
+/* Hero portrait moved upward into blank upper area */
+.hero {
+  align-items: start;
+}
+
+.clean-hero-stack {
+  align-self: start;
+  margin-top: 28px;
+  position: relative;
+  display: grid;
+  gap: 18px;
+}
+
+.hero-profile-card {
+  max-width: 460px;
+  justify-self: center;
+}
+
+.compact-auto-visual {
+  margin-top: 8px;
+}
+
+@media (min-width: 981px) {
+  .clean-hero-stack {
+    padding-top: 8px;
+  }
+}
+
+@media (max-width: 1180px) {
+  .hero {
+    align-items: start;
+  }
+
+  .clean-hero-stack {
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 820px) {
+  .clean-hero-stack {
+    margin-top: 0;
+  }
+
+  .hero-profile-card {
+    max-width: 100%;
+  }
+}
