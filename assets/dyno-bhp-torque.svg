@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#08111f"/>
+      <stop offset="100%" stop-color="#0d1a31"/>
+    </linearGradient>
+    <linearGradient id="bhp" x1="0" x2="1">
+      <stop offset="0%" stop-color="#6dffe0"/>
+      <stop offset="100%" stop-color="#8daeff"/>
+    </linearGradient>
+    <linearGradient id="tq" x1="0" x2="1">
+      <stop offset="0%" stop-color="#ffb36d"/>
+      <stop offset="100%" stop-color="#ff5f5f"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="700" rx="36" fill="url(#bg)"/>
+  <text x="70" y="80" fill="#6dffe0" font-size="28" font-family="Arial" font-weight="700" letter-spacing="2">ICE TURBO DYNO RUN</text>
+  <text x="70" y="125" fill="#f3f7ff" font-size="56" font-family="Arial" font-weight="700">BHP &amp; Torque Curve</text>
+  <text x="70" y="165" fill="#96a7c8" font-size="22" font-family="Arial">Performance calibration overview • boost onset • mid-range torque • top-end power</text>
+  <rect x="70" y="205" width="1060" height="390" rx="22" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.12)"/>
+  <g opacity="0.25" stroke="#a8bddf" stroke-width="1">
+    <line x1="150" y1="250" x2="150" y2="560"/><line x1="280" y1="250" x2="280" y2="560"/><line x1="410" y1="250" x2="410" y2="560"/>
+    <line x1="540" y1="250" x2="540" y2="560"/><line x1="670" y1="250" x2="670" y2="560"/><line x1="800" y1="250" x2="800" y2="560"/>
+    <line x1="930" y1="250" x2="930" y2="560"/><line x1="1060" y1="250" x2="1060" y2="560"/>
+    <line x1="150" y1="560" x2="1060" y2="560"/><line x1="150" y1="500" x2="1060" y2="500"/><line x1="150" y1="440" x2="1060" y2="440"/>
+    <line x1="150" y1="380" x2="1060" y2="380"/><line x1="150" y1="320" x2="1060" y2="320"/><line x1="150" y1="260" x2="1060" y2="260"/>
+  </g>
+  <g fill="#c9d4ea" font-size="18" font-family="Arial">
+    <text x="102" y="566">2k</text><text x="232" y="566">3k</text><text x="362" y="566">4k</text><text x="492" y="566">5k</text>
+    <text x="622" y="566">6k</text><text x="752" y="566">7k</text><text x="882" y="566">8k</text><text x="1008" y="566">9k</text>
+    <text x="80" y="563">0</text><text x="66" y="503">100</text><text x="66" y="443">200</text><text x="66" y="383">300</text><text x="66" y="323">400</text><text x="66" y="263">500</text>
+  </g>
+  <text x="560" y="620" fill="#96a7c8" font-size="20" font-family="Arial">Engine Speed (RPM)</text>
+  <text x="35" y="420" fill="#96a7c8" font-size="20" font-family="Arial" transform="rotate(-90 35 420)">Power / Torque</text>
+  <rect x="290" y="205" width="180" height="390" fill="rgba(109,255,224,0.04)"/>
+  <line x1="380" y1="205" x2="380" y2="595" stroke="#6dffe0" stroke-width="2" stroke-dasharray="8 8"/>
+  <text x="330" y="235" fill="#6dffe0" font-size="18" font-family="Arial">Turbo spool zone</text>
+  <path d="M150 545 C200 535, 230 520, 280 495 C330 470, 370 430, 410 392 C445 360, 495 330, 540 305 C590 282, 635 267, 670 258 C720 247, 770 245, 800 252 C850 264, 900 282, 930 300 C970 326, 1005 350, 1060 390" fill="none" stroke="url(#bhp)" stroke-width="7" filter="url(#glow)"/>
+  <path d="M150 510 C200 480, 235 430, 280 372 C330 310, 370 280, 410 265 C455 250, 500 245, 540 250 C590 257, 640 270, 670 285 C720 308, 775 340, 800 360 C850 395, 900 430, 930 458 C970 485, 1005 505, 1060 530" fill="none" stroke="url(#tq)" stroke-width="7" filter="url(#glow)"/>
+  <circle cx="860" cy="105" r="8" fill="#6dffe0"/><text x="880" y="112" fill="#f3f7ff" font-size="22" font-family="Arial">BHP</text>
+  <circle cx="960" cy="105" r="8" fill="#ff7a6d"/><text x="980" y="112" fill="#f3f7ff" font-size="22" font-family="Arial">Torque</text>
+  <g>
+    <circle cx="790" cy="248" r="7" fill="#6dffe0"/><line x1="790" y1="248" x2="900" y2="210" stroke="#6dffe0" stroke-width="2"/>
+    <rect x="900" y="178" width="160" height="48" rx="12" fill="#0e1a30" stroke="rgba(109,255,224,0.35)"/>
+    <text x="918" y="207" fill="#6dffe0" font-size="18" font-family="Arial" font-weight="700">Peak BHP • 418</text>
+    <circle cx="515" cy="246" r="7" fill="#ff8575"/><line x1="515" y1="246" x2="390" y2="215" stroke="#ff8575" stroke-width="2"/>
+    <rect x="190" y="183" width="190" height="48" rx="12" fill="#0e1a30" stroke="rgba(255,122,109,0.35)"/>
+    <text x="208" y="212" fill="#ff9f90" font-size="18" font-family="Arial" font-weight="700">Peak Torque • 520 Nm</text>
+  </g>
+  <g>
+    <rect x="70" y="640" width="180" height="34" rx="16" fill="#101d34" stroke="rgba(255,255,255,0.12)"/><text x="94" y="662" fill="#c9d4ea" font-size="16" font-family="Arial">Throttle mapping</text>
+    <rect x="265" y="640" width="160" height="34" rx="16" fill="#101d34" stroke="rgba(255,255,255,0.12)"/><text x="298" y="662" fill="#c9d4ea" font-size="16" font-family="Arial">Boost onset</text>
+    <rect x="440" y="640" width="198" height="34" rx="16" fill="#101d34" stroke="rgba(255,255,255,0.12)"/><text x="468" y="662" fill="#c9d4ea" font-size="16" font-family="Arial">Rev-match response</text>
+  </g>
+</svg>
