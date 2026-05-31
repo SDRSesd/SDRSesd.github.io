@@ -36,6 +36,11 @@ let lastTimestamp = 0;
 let lastGearShiftMs = 0;
 let lastSpoolPopMs = 0;
 
+let downshiftActive = false;
+let downshiftQueue = [];
+let downshiftNextMs = 0;
+let downshiftBlipUntilMs = 0;
+
 let audioReady = false;
 let audioCtx = null;
 let masterGain = null;
@@ -78,7 +83,12 @@ function updateButtonStates() {
 
   if (acceleratorBtn) {
     acceleratorBtn.classList.toggle("is-pressed", acceleratorPressed);
-    acceleratorBtn.textContent = acceleratorPressed ? "Accelerator: Holding" : "Hold Accelerator";
+    acceleratorBtn.classList.toggle("downshift-armed", downshiftActive);
+    acceleratorBtn.textContent = acceleratorPressed
+      ? "Accelerator: Holding"
+      : downshiftActive
+      ? "Rev-Match Downshift"
+      : "Hold Accelerator";
     acceleratorBtn.setAttribute("aria-pressed", acceleratorPressed ? "true" : "false");
   }
 
@@ -91,6 +101,7 @@ function updateButtonStates() {
   if (gaugeCard) {
     gaugeCard.classList.toggle("engine-running", engineRunning);
     gaugeCard.classList.toggle("drive-active", driveMode);
+    gaugeCard.classList.toggle("downshift-active", downshiftActive);
   }
 
   if (engineStatus) engineStatus.textContent = engineRunning ? "ON" : "OFF";
@@ -102,8 +113,10 @@ function updateButtonStates() {
       rpmNote.textContent = "Engine stopped • press Engine Start to activate motorsport demo";
     } else if (!driveMode) {
       rpmNote.textContent = "Neutral mode • hold accelerator for free-rev and release for pops/bangs";
+    } else if (downshiftActive) {
+      rpmNote.textContent = "Rev-match downshift active • gears drop one by one with throttle blips and overrun crackles";
     } else {
-      rpmNote.textContent = "Drive mode • hold accelerator for rolling pull, turbo spool and auto gearshift";
+      rpmNote.textContent = "Drive mode • hold accelerator for rolling pull, turbo spool, upshifts and release for downshift sequence";
     }
   }
 }
@@ -213,12 +226,12 @@ function updateAudio(rpm) {
   oscB.frequency.setTargetAtTime(baseHz * 1.92, now, 0.025);
   oscC.frequency.setTargetAtTime(baseHz * 0.5, now, 0.025);
 
-  const engineLevel = 0.08 + (rpm / 8500) * 0.16 + throttle * 0.08;
+  const engineLevel = 0.08 + (rpm / 8500) * 0.16 + throttle * 0.08 + (downshiftActive ? 0.08 : 0);
   engineFilter.frequency.setTargetAtTime(420 + rpm / 4.7, now, 0.045);
   engineGain.gain.setTargetAtTime(engineLevel, now, 0.035);
 
   // Turbo is purposely delayed: no strong turbo at normal idle.
-  const spoolFactor = clamp((rpm - 3800) / 3600, 0, 1) * throttle;
+  const spoolFactor = clamp((rpm - 3800) / 3600, 0, 1) * Math.max(throttle, downshiftActive ? 0.55 : 0);
   turboFilter.frequency.setTargetAtTime(900 + spoolFactor * 2400, now, 0.06);
   turboGain.gain.setTargetAtTime(spoolFactor * 0.16, now, 0.06);
 }
@@ -239,7 +252,7 @@ function makePopBang(strength = 1) {
 
   const popGain = audioCtx.createGain();
   popGain.gain.setValueAtTime(0.0001, now);
-  popGain.gain.linearRampToValueAtTime(0.17 * strength, now + 0.008);
+  popGain.gain.linearRampToValueAtTime(0.18 * strength, now + 0.008);
   popGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
 
   popSource.connect(popFilter);
@@ -254,7 +267,7 @@ function makePopBang(strength = 1) {
   crack.type = "square";
   crack.frequency.setValueAtTime(150 + Math.random() * 140, now);
   crackGain.gain.setValueAtTime(0.0001, now);
-  crackGain.gain.linearRampToValueAtTime(0.050 * strength, now + 0.005);
+  crackGain.gain.linearRampToValueAtTime(0.060 * strength, now + 0.005);
   crackGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.075);
   crack.connect(crackGain);
   crackGain.connect(masterGain);
@@ -275,6 +288,54 @@ function triggerGearshiftPop() {
   makePopBang(0.45);
 }
 
+function triggerDownshiftBlip(intensity = 1) {
+  if (!engineRunning) return;
+  downshiftBlipUntilMs = performance.now() + 390;
+  throttle = Math.max(throttle, 0.72);
+  currentRpm = clamp(currentRpm + 1550 * intensity, 1600, 8200);
+
+  if (audioEnabled) {
+    makePopBang(0.8 * intensity);
+    setTimeout(() => makePopBang(0.6 * intensity), 110);
+  }
+}
+
+function startDownshiftSequence() {
+  if (!engineRunning || !driveMode || gear <= 1) return;
+
+  downshiftQueue = [];
+  for (let g = gear - 1; g >= 1; g -= 1) {
+    downshiftQueue.push(g);
+  }
+
+  if (!downshiftQueue.length) return;
+
+  downshiftActive = true;
+  downshiftNextMs = performance.now() + 220;
+  triggerOverrunPops();
+  updateButtonStates();
+}
+
+function processDownshiftSequence(timestamp) {
+  if (!downshiftActive) return;
+
+  if (timestamp >= downshiftNextMs && downshiftQueue.length) {
+    gear = downshiftQueue.shift();
+    const intensity = clamp(1 + (6 - gear) * 0.11, 1, 1.55);
+    triggerDownshiftBlip(intensity);
+    triggerOverrunPops();
+    downshiftNextMs = timestamp + 620;
+    updateButtonStates();
+  }
+
+  if (!downshiftQueue.length && timestamp > downshiftNextMs + 450) {
+    downshiftActive = false;
+    throttle = 0;
+    updateButtonStates();
+  }
+}
+
+
 async function startEngine() {
   ensureAudio();
   if (audioCtx && audioCtx.state === "suspended") await audioCtx.resume();
@@ -294,6 +355,8 @@ function stopEngine() {
   engineRunning = false;
   acceleratorPressed = false;
   driveMode = false;
+  downshiftActive = false;
+  downshiftQueue = [];
   gear = 0;
   throttle = 0;
   currentSpeed = 0;
@@ -302,6 +365,8 @@ function stopEngine() {
 
 function setDriveMode(enabled) {
   driveMode = enabled;
+  downshiftActive = false;
+  downshiftQueue = [];
   if (driveMode && engineRunning) {
     gear = 1;
     currentSpeed = Math.max(currentSpeed, 8);
@@ -315,7 +380,10 @@ function setDriveMode(enabled) {
 function setAcceleratorPressed(pressed) {
   if (!engineRunning) return;
   acceleratorPressed = pressed;
-  if (!pressed) triggerOverrunPops();
+  if (!pressed) {
+    if (driveMode && gear > 1) startDownshiftSequence();
+    else triggerOverrunPops();
+  }
   updateButtonStates();
 }
 
@@ -323,7 +391,9 @@ function updateVehicleState(timestamp) {
   const dt = lastTimestamp ? Math.min((timestamp - lastTimestamp) / 1000, 0.05) : 0.016;
   lastTimestamp = timestamp;
 
-  const targetThrottle = engineRunning && acceleratorPressed ? 1 : 0;
+  processDownshiftSequence(timestamp);
+
+  const targetThrottle = engineRunning && (acceleratorPressed || downshiftActive) ? (downshiftActive ? 0.55 : 1) : 0;
   const throttleRate = targetThrottle > throttle ? 2.6 : 3.8;
   throttle += (targetThrottle - throttle) * clamp(dt * throttleRate, 0, 1);
 
@@ -349,22 +419,26 @@ function updateVehicleState(timestamp) {
     const finalDrive = 36;
     const ratio = gearRatios[gear] || 1;
 
-    if (acceleratorPressed) {
+    if (acceleratorPressed && !downshiftActive) {
       currentSpeed += (18 / gear) * throttle * dt;
-      currentSpeed = clamp(currentSpeed, 0, 230);
+      currentSpeed = clamp(currentSpeed, 0, 245);
     } else {
-      currentSpeed -= 18 * dt;
+      currentSpeed -= (downshiftActive ? 7 : 18) * dt;
       currentSpeed = Math.max(0, currentSpeed);
     }
 
     const rollingRpm = 900 + currentSpeed * ratio * finalDrive;
-    const targetRpm = acceleratorPressed
+    let targetRpm = acceleratorPressed
       ? clamp(rollingRpm + throttle * 1500, 1200, 8200)
-      : clamp(rollingRpm, 950, 3800);
+      : clamp(rollingRpm, 950, 4200);
 
-    currentRpm += (targetRpm - currentRpm) * clamp(dt * 4.0, 0, 1);
+    if (downshiftActive && timestamp < downshiftBlipUntilMs) {
+      targetRpm = clamp(Math.max(targetRpm, currentRpm + 600), 2500, 8200);
+    }
 
-    if (acceleratorPressed && currentRpm > 6900 && gear < 6 && timestamp - lastGearShiftMs > 650) {
+    currentRpm += (targetRpm - currentRpm) * clamp(dt * (downshiftActive ? 5.6 : 4.0), 0, 1);
+
+    if (acceleratorPressed && !downshiftActive && currentRpm > 6900 && gear < 6 && timestamp - lastGearShiftMs > 650) {
       gear += 1;
       lastGearShiftMs = timestamp;
       currentRpm -= 2100;
@@ -372,7 +446,7 @@ function updateVehicleState(timestamp) {
       updateButtonStates();
     }
 
-    if (!acceleratorPressed && currentSpeed < 9) {
+    if (!acceleratorPressed && !downshiftActive && currentSpeed < 9) {
       gear = 1;
       updateButtonStates();
     }

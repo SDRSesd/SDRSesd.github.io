@@ -2076,3 +2076,17 @@ svg {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+/* Rev-match downshift enhancement */
+.rpm-gauge-card.downshift-active {
+  border-color: rgba(255, 122, 24, 0.58);
+  box-shadow: 0 0 0 1px rgba(255,122,24,0.18), 0 20px 60px rgba(0,0,0,0.36);
+}
+.rpm-gauge-card.downshift-active .rpm-readout strong,
+.rpm-gauge-card.downshift-active .motorsport-status strong {
+  color: #ffb36d;
+}
+.pedal-btn.downshift-armed {
+  border-color: rgba(255,122,24,0.55);
+  background: rgba(255,122,24,0.14);
+}
