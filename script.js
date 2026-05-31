@@ -19,13 +19,8 @@ if (yearTarget) {
 }
 
 const gaugeCard = document.getElementById("rpmGaugeCard");
-const rpmNeedle = document.getElementById("rpmNeedle");
+const needleWrap = document.getElementById("rpmNeedleWrap");
 const rpmValue = document.getElementById("rpmValue");
-const rpmX1000Value = document.getElementById("rpmX1000Value");
-const rpmStateLabel = document.getElementById("rpmStateLabel");
-const tachTickGroup = document.getElementById("tachTickGroup");
-const tachNormalArc = document.getElementById("tachNormalArc");
-const tachRedlineArc = document.getElementById("tachRedlineArc");
 const audioToggle = document.getElementById("audioToggle");
 
 let mode = "idle";
@@ -45,77 +40,9 @@ const MAX_MASTER_GAIN = 0.38;
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-const TACH_CENTER_X = 160;
-const TACH_CENTER_Y = 128;
-const TACH_RADIUS_OUTER = 84;
-const TACH_RADIUS_MAJOR = 70;
-const TACH_RADIUS_MINOR = 76;
-const TACH_LABEL_RADIUS = 56;
-const TACH_NEEDLE_LENGTH = 73;
-const TACH_MIN_RPM = 0;
-const TACH_MAX_RPM = 9000;
-const TACH_START_DEG = 150;
-const TACH_END_DEG = 30;
-
 function rpmToAngle(rpm) {
-  const limited = clamp(rpm, TACH_MIN_RPM, TACH_MAX_RPM);
-  return TACH_START_DEG + (limited / TACH_MAX_RPM) * (TACH_END_DEG - TACH_START_DEG);
-}
-
-function polarPoint(cx, cy, radius, deg) {
-  const rad = (deg * Math.PI) / 180;
-  return {
-    x: cx + radius * Math.cos(rad),
-    y: cy - radius * Math.sin(rad)
-  };
-}
-
-function describeArc(cx, cy, radius, startDeg, endDeg) {
-  const start = polarPoint(cx, cy, radius, startDeg);
-  const end = polarPoint(cx, cy, radius, endDeg);
-  const sweep = Math.abs(endDeg - startDeg);
-  const largeArcFlag = sweep > 180 ? 1 : 0;
-  const sweepFlag = endDeg < startDeg ? 1 : 0;
-  return `M ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x.toFixed(2)} ${end.y.toFixed(2)}`;
-}
-
-function renderTachometerFace() {
-  if (!tachTickGroup) return;
-  if (tachTickGroup.childNodes.length) return;
-
-  for (let i = 0; i <= 45; i += 1) {
-    const fraction = i / 45;
-    const angle = TACH_START_DEG + fraction * (TACH_END_DEG - TACH_START_DEG);
-    const major = i % 5 === 0;
-    const outer = polarPoint(TACH_CENTER_X, TACH_CENTER_Y, TACH_RADIUS_OUTER, angle);
-    const inner = polarPoint(TACH_CENTER_X, TACH_CENTER_Y, major ? TACH_RADIUS_MAJOR : TACH_RADIUS_MINOR, angle);
-    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('x1', outer.x.toFixed(2));
-    line.setAttribute('y1', outer.y.toFixed(2));
-    line.setAttribute('x2', inner.x.toFixed(2));
-    line.setAttribute('y2', inner.y.toFixed(2));
-    line.setAttribute('class', `tach-tick ${major ? 'major' : 'minor'}`);
-    tachTickGroup.appendChild(line);
-
-    if (major) {
-      const labelValue = i / 5;
-      const labelPoint = polarPoint(TACH_CENTER_X, TACH_CENTER_Y, TACH_LABEL_RADIUS, angle);
-      const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      label.setAttribute('x', labelPoint.x.toFixed(2));
-      label.setAttribute('y', (labelPoint.y + 5).toFixed(2));
-      label.setAttribute('text-anchor', 'middle');
-      label.setAttribute('class', 'tach-label');
-      label.textContent = labelValue.toString();
-      tachTickGroup.appendChild(label);
-    }
-  }
-
-  if (tachNormalArc) {
-    tachNormalArc.setAttribute('d', describeArc(TACH_CENTER_X, TACH_CENTER_Y, 86, 150, 48));
-  }
-  if (tachRedlineArc) {
-    tachRedlineArc.setAttribute('d', describeArc(TACH_CENTER_X, TACH_CENTER_Y, 86, 48, 30));
-  }
+  const limited = clamp(rpm, 0, 8500);
+  return -120 + (limited / 8500) * 240;
 }
 
 function updateAudioButton() {
@@ -126,22 +53,10 @@ function updateAudioButton() {
 }
 
 function setGauge(rpm) {
-  if (!rpmNeedle || !rpmValue || !gaugeCard) return;
+  if (!needleWrap || !rpmValue || !gaugeCard) return;
   const angle = rpmToAngle(rpm);
-  const needlePoint = polarPoint(TACH_CENTER_X, TACH_CENTER_Y, TACH_NEEDLE_LENGTH, angle);
-  rpmNeedle.setAttribute('x2', needlePoint.x.toFixed(2));
-  rpmNeedle.setAttribute('y2', needlePoint.y.toFixed(2));
+  needleWrap.style.transform = `rotate(${angle}deg)`;
   rpmValue.textContent = Math.round(rpm).toString();
-  if (rpmX1000Value) {
-    rpmX1000Value.textContent = (rpm / 1000).toFixed(1);
-  }
-  if (rpmStateLabel) {
-    rpmStateLabel.textContent = mode === 'hover'
-      ? 'Rolling high-RPM sweep'
-      : mode === 'burst'
-      ? 'Driver blip / redline burst'
-      : 'Idle sweep active';
-  }
   gaugeCard.classList.toggle("is-redline", rpm >= 7200);
   updateAudio(rpm);
 }
@@ -356,9 +271,7 @@ function animateGauge(timestamp) {
   }
 
   setGauge(rpm);
-  renderTachometerFace();
-requestAnimationFrame(animateGauge);
+  requestAnimationFrame(animateGauge);
 }
 
-renderTachometerFace();
 requestAnimationFrame(animateGauge);

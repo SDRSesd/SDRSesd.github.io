@@ -1699,7 +1699,7 @@ svg {
 }
 
 
-/* Realistic tachometer upgrade */
+
 .tachometer-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -1840,5 +1840,63 @@ svg {
     align-items: center;
     text-align: center;
     min-width: 0;
+  }
+}
+
+
+/* Stable original RPM gauge on laptop/mobile/tablet */
+.rpm-gauge-card {
+  min-height: 286px;
+}
+
+.rpm-gauge-wrap {
+  grid-template-columns: minmax(0, 1fr) 86px;
+  align-items: center;
+}
+
+.rpm-svg {
+  display: block;
+  width: 100%;
+  max-width: 230px;
+  min-width: 0;
+  flex-shrink: 0;
+}
+
+.needle-wrap {
+  will-change: transform;
+}
+
+.rpm-readout {
+  min-width: 86px;
+}
+
+.rpm-readout strong {
+  font-variant-numeric: tabular-nums;
+  min-width: 4ch;
+  text-align: right;
+}
+
+.audio-toggle {
+  min-width: 165px;
+}
+
+@media (max-width: 860px) {
+  .rpm-gauge-card {
+    min-height: auto;
+  }
+
+  .rpm-gauge-wrap {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .rpm-readout {
+    align-items: center;
+    min-width: 0;
+  }
+
+  .rpm-readout strong {
+    text-align: center;
   }
 }
