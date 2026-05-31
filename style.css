@@ -1900,3 +1900,46 @@ svg {
     text-align: center;
   }
 }
+
+
+/* Laptop-safe RPM needle + stronger engine audio UI stability */
+.rpm-svg {
+  overflow: visible;
+}
+
+.needle {
+  transition: x2 0.10s linear, y2 0.10s linear;
+  will-change: auto;
+}
+
+.needle-wrap {
+  transform: none !important;
+}
+
+.rpm-gauge-card {
+  contain: layout paint;
+}
+
+.rpm-readout strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.audio-toggle {
+  user-select: none;
+}
+
+/* Final RPM needle synchronization fix - design unchanged */
+.rpm-svg { overflow: visible; }
+.needle {
+  transition: x2 0.10s linear, y2 0.10s linear;
+  will-change: auto;
+}
+.needle-wrap { transform: none !important; }
+.rpm-readout strong {
+  font-variant-numeric: tabular-nums;
+  min-width: 4ch;
+}
+.audio-toggle {
+  touch-action: manipulation;
+  user-select: none;
+}
