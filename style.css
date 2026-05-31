@@ -1575,3 +1575,26 @@ svg {
     min-height: 235px;
   }
 }
+
+
+/* Original white-background portrait styling */
+.profile-image-frame {
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 16px 36px rgba(0,0,0,0.38),
+    0 0 30px rgba(109,255,224,0.08);
+}
+
+.profile-image-frame .hero-portrait {
+  object-fit: cover;
+  object-position: center top;
+  background: #ffffff;
+  filter: none;
+  opacity: 1;
+}
+
+.profile-image-frame::after {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.0));
+}
