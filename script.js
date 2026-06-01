@@ -536,21 +536,42 @@ function updateVehicleState(timestamp) {
     if (!acceleratorPressed && !downshiftActive && gear <= 1 && finalGearHoldActive) {
       if (timestamp <= finalGearHoldUntilMs) {
         // Connected driveline / engine-braking mimic.
+        // Hold around 4.2K RPM briefly without allowing an idle dip.
         targetRpm = 4200 + 90 * Math.sin(timestamp / 130);
+
+        // Keep enough rolling feel during the hold phase.
         currentSpeed = Math.max(currentSpeed, 18);
       } else {
-        // Smooth, realistic coast down from 4.2K to idle.
+        // Smooth coast down from 4.2K to idle.
         const coastProgress = clamp(
-          (timestamp - finalGearHoldUntilMs) / Math.max(finalGearCoastUntilMs - finalGearHoldUntilMs, 1),
+          (timestamp - finalGearHoldUntilMs) /
+            Math.max(finalGearCoastUntilMs - finalGearHoldUntilMs, 1),
           0,
           1
         );
 
+        const idleTarget = 1050 + 70 * Math.sin(timestamp / 420);
         const coastTarget = 4200 - coastProgress * 3150;
-        targetRpm = Math.max(1050 + 70 * Math.sin(timestamp / 420), coastTarget);
 
-        if (timestamp >= finalGearCoastUntilMs || targetRpm <= 1130) {
+        // During this phase, RPM must be controlled by the coast curve,
+        // not by rollingRpm, otherwise it can jump back to 4.2K.
+        targetRpm = Math.max(idleTarget, coastTarget);
+
+        // Bleed vehicle speed down during the coast phase so rollingRpm
+        // cannot pull the needle back up after finalGearHoldActive ends.
+        currentSpeed -= 42 * dt;
+        currentSpeed = Math.max(0, currentSpeed);
+
+        // Only exit the final hold/coast state once RPM and speed are both low.
+        // This prevents the 1K → 4.2K bounce.
+        if (
+          timestamp >= finalGearCoastUntilMs &&
+          currentSpeed <= 6 &&
+          currentRpm <= 1250
+        ) {
           finalGearHoldActive = false;
+          currentSpeed = 0;
+          currentRpm = Math.max(currentRpm, 1050);
         }
       }
     }
