@@ -3264,3 +3264,75 @@ canvas {
     padding: 20px 14px;
   }
 }
+
+
+
+/* Final stable Street/Track mode toggle styling */
+.mode-switcher {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: 14px;
+  flex-shrink: 0;
+}
+
+.mode-btn,
+.mode-toggle-single {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid rgba(255, 59, 48, 0.72);
+  border-radius: 999px;
+  min-height: 46px;
+  min-width: 150px;
+  padding: 0 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ff3b30, #b91412);
+  color: #ffffff;
+  font-size: 0.94rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(197, 22, 18, 0.25);
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+.mode-btn:hover,
+.mode-toggle-single:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,0.35);
+}
+
+body.track-mode .mode-toggle-single {
+  background: linear-gradient(135deg, #ffffff, #dfe3ea);
+  color: #111216;
+  border-color: rgba(255,255,255,0.9);
+  box-shadow: 0 10px 24px rgba(255,255,255,0.12);
+}
+
+@media (max-width: 980px) {
+  .mode-switcher {
+    margin-left: 0;
+  }
+
+  .mode-btn,
+  .mode-toggle-single {
+    min-width: 132px;
+    min-height: 42px;
+    padding: 0 16px;
+    font-size: 0.86rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .mode-switcher {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .mode-btn,
+  .mode-toggle-single {
+    width: 100%;
+  }
+}
