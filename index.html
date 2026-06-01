@@ -10,15 +10,23 @@
 <body>
   <header class="site-header">
     <nav class="navbar">
-      <a href="#home" class="logo">Shivadurgarajasekar Selvaraj</a>
+      <a href="#home" class="brand-wrap" aria-label="Torque and Code home">
+        <span class="brand-badge">TC</span>
+        <span class="brand-copy">
+          <strong class="brand-title">Torque &amp; Code</strong>
+          <span class="brand-subtitle">Embedded Automotive Portfolio</span>
+        </span>
+      </a>
       <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">☰</button>
       <div class="nav-links" id="navLinks">
-        <a href="#about">About</a>
-        <a href="#expertise">Expertise</a>
-        <a href="#projects">Projects</a>
-        <a href="#performance">Performance</a>
-        <a href="#perspective">Perspective</a>
-        <a href="#contact">Contact</a>
+        <a href="#about">Profile</a>
+        <a href="#expertise">Systems</a>
+        <a href="#projects">Garage</a>
+        <a href="#performance">Track</a>
+        <a href="#contact">Radio</a>
+      </div>
+      <div class="mode-switcher" aria-label="Theme mode">
+        <button class="mode-btn mode-toggle-single" id="modeToggleBtn" type="button" aria-label="Switch to Track Mode">Track Mode</button>
       </div>
     </nav>
   </header>
@@ -26,8 +34,8 @@
   <main>
     <section id="home" class="hero section">
       <div class="hero-copy">
-        <p class="eyebrow">Senior Automotive Embedded Systems Engineer • EV Platforms • ECU Architecture • CAN / CAN FD • Performance Electronics</p>
-        <h1>Automotive systems.<br />Performance mindset.</h1>
+        <p class="eyebrow">SENIOR AUTOMOTIVE EMBEDDED SYSTEMS ENGINEER • ECU SYSTEMS • CAN / CAN FD • CALIBRATION LOGIC • PERFORMANCE ELECTRONICS</p>
+        <h1>Every project gets its own pit lane.</h1>
         <p class="hero-text">
           I build automotive embedded systems across EV control, ECU communication architecture,
           diagnostics, telemetry, and secure in-vehicle electronics. My approach combines product discipline,
@@ -73,7 +81,7 @@
                   <text x="54" y="92">1</text>
                   <text x="95" y="56">3</text>
                   <text x="145" y="56">5</text>
-                  <text x="188" y="92">7</text>
+                  <text x="184" y="92">7</text>
                 </g>
 
                 <line id="rpmNeedle" x1="130" y1="120" x2="90" y2="60" class="needle"></line>
@@ -112,7 +120,7 @@
               <div class="throttle-bar"><i id="throttleFill"></i></div>
             </div>
 
-            <p class="rpm-note" id="rpmNote">Start engine first • Neutral keeps free-rev mode • Drive enables rolling pull with auto gearshift</p>
+            <p class="rpm-note" id="rpmNote">Start engine first • Neutral free-rev preserved • Drive mode adds auto upshift and rev-match downshift</p>
           </div>
         </div>
 
@@ -139,6 +147,8 @@
           </div>
           <div class="profile-card-copy">
             <span>Senior Automotive Embedded Systems Engineer</span>
+            <h3 class="profile-card-name">S.Shivadurgarajasekar</h3>
+            <p class="profile-card-degree">Master's in Embedded System Technologies</p>
             <strong>EV • ECU • CAN FD • Secure Automotive Platforms</strong>
           </div>
         </div>
@@ -158,9 +168,13 @@
     </section>
 
     <section id="about" class="section premium-panel">
-      <div class="section-heading">
-        <p class="eyebrow">About</p>
-        <h2>Automotive embedded engineering with both system depth and enthusiast intuition.</h2>
+      <div class="section-heading about-heading">
+        <p class="eyebrow">DRIVER PROFILE</p>
+        <h2>Built for embedded automotive work.</h2>
+        
+        <div class="track-photo-card" aria-hidden="true">
+          <img src="assets/premium-racetrack-driver-profile.png" alt="Premium racetrack visual" />
+        </div>
       </div>
       <div class="two-column">
         <p>
@@ -178,8 +192,8 @@
 
     <section id="expertise" class="section section-bg">
       <div class="section-heading">
-        <p class="eyebrow">Core Expertise</p>
-        <h2>Capability areas built for modern automotive platforms.</h2>
+        <p class="eyebrow">PERFORMANCE SYSTEMS</p>
+        <h2>Skills shown as vehicle subsystems.</h2>
       </div>
       <div class="grid cards four-up">
         <article class="card premium-card">
@@ -224,8 +238,8 @@
 
     <section id="projects" class="section">
       <div class="section-heading">
-        <p class="eyebrow">Selected Work</p>
-        <h2>Engineering themes aligned with premium automotive electronics.</h2>
+        <p class="eyebrow">CAREER TRACK</p>
+        <h2>A timeline with racing-circuit energy.</h2>
       </div>
       <div class="grid projects image-projects">
         <article class="project-card image-card">
@@ -385,18 +399,43 @@
     </section>
 
 
-    <section id="contact" class="section contact">
-      <div class="contact-box">
-        <p class="eyebrow">Contact</p>
+    <section id="contact" class="section contact contact-layout">
+      <div class="contact-copy-panel">
+        <p class="eyebrow">PIT RADIO</p>
         <h2>Let’s discuss premium automotive embedded systems, secure ECU architecture, or performance-oriented electronics.</h2>
-        <p>
-          If your work involves EV systems, embedded firmware, secure in-vehicle communication, CAN / CAN FD architecture,
-          calibration-oriented workflows, or advanced automotive electronics, I would be glad to connect.
+        <p class="contact-lead">
+          If your work involves EV systems, embedded firmware, secure in-vehicle communication,
+          CAN / CAN FD architecture, calibration-oriented workflows, or advanced automotive
+          electronics, I would be glad to connect.
         </p>
         <div class="contact-actions">
           <a href="mailto:shivadurgarajasekar@gmail.com" class="btn primary">Email Me</a>
           <a href="https://github.com/SDRSesd" class="btn secondary" target="_blank" rel="noopener">GitHub</a>
         </div>
+      </div>
+
+      <div class="contact-form-panel">
+        <form class="pit-radio-form" action="mailto:shivadurgarajasekar@gmail.com" method="post" enctype="text/plain">
+          <label>
+            <span>Name</span>
+            <input type="text" name="name" placeholder="Your name" />
+          </label>
+
+          <label>
+            <span>Email</span>
+            <input type="email" name="email" placeholder="you@example.com" />
+          </label>
+
+          <label>
+            <span>Message</span>
+            <textarea name="message" rows="6" placeholder="Tell me about the project, role or collaboration."></textarea>
+          </label>
+
+          <div class="contact-form-actions">
+            <button type="submit" class="btn primary">Send Message</button>
+            <a href="https://github.com/SDRSesd" class="btn secondary" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </form>
       </div>
     </section>
   </main>

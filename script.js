@@ -672,3 +672,38 @@ function animationLoop(timestamp) {
 
 updateButtonStates();
 requestAnimationFrame(animationLoop);
+
+
+/* Street / Track mode toggle - no engine rumble */
+const modeToggleBtn = document.getElementById("modeToggleBtn");
+
+function updateModeToggleLabel(isTrack) {
+  if (!modeToggleBtn) return;
+  modeToggleBtn.textContent = isTrack ? "Street Mode" : "Track Mode";
+  modeToggleBtn.setAttribute("aria-label", isTrack ? "Switch to Street Mode" : "Switch to Track Mode");
+  modeToggleBtn.setAttribute("title", isTrack ? "Switch to Street Mode" : "Switch to Track Mode");
+}
+
+function applyThemeMode(mode) {
+  const isTrack = mode === "track";
+  document.body.classList.toggle("track-mode", isTrack);
+  updateModeToggleLabel(isTrack);
+
+  try {
+    localStorage.setItem("portfolioThemeMode", mode);
+  } catch (e) {}
+}
+
+if (modeToggleBtn) {
+  modeToggleBtn.addEventListener("click", () => {
+    const isTrack = document.body.classList.contains("track-mode");
+    applyThemeMode(isTrack ? "street" : "track");
+  });
+}
+
+try {
+  const savedMode = localStorage.getItem("portfolioThemeMode");
+  applyThemeMode(savedMode === "track" ? "track" : "street");
+} catch (e) {
+  applyThemeMode("street");
+}
