@@ -40,6 +40,9 @@ let downshiftActive = false;
 let downshiftQueue = [];
 let downshiftNextMs = 0;
 let downshiftBlipUntilMs = 0;
+let finalGearHoldActive = false;
+let finalGearHoldUntilMs = 0;
+let finalGearCoastUntilMs = 0;
 let coastToIdleActive = false;
 let coastToIdleUntilMs = 0;
 
@@ -116,7 +119,7 @@ function updateButtonStates() {
     } else if (!driveMode) {
       rpmNote.textContent = "Neutral mode • hold accelerator for free-rev and release for pops/bangs";
     } else if (downshiftActive) {
-      rpmNote.textContent = "Rev-match downshift active • gears drop one by one with throttle blips, crackles and final coast-to-idle";
+      rpmNote.textContent = "Rev-match downshift active • gears drop one by one with throttle blips, crackles and final 4.2K hold and coast-to-idle";
     } else {
       rpmNote.textContent = "Drive mode • hold accelerator for rolling pull, turbo spool, upshifts and release for downshift sequence";
     }
@@ -333,8 +336,15 @@ function processDownshiftSequence(timestamp) {
   if (!downshiftQueue.length && timestamp > downshiftNextMs + 450) {
     downshiftActive = false;
     throttle = 0;
-    coastToIdleActive = true;
-    coastToIdleUntilMs = timestamp + 1600;
+
+    // After final 1st gear downshift, hold around 4.2K briefly to mimic
+    // engine braking while the driveline is still connected, then coast down.
+    finalGearHoldActive = true;
+    finalGearHoldUntilMs = timestamp + 1350;
+    finalGearCoastUntilMs = timestamp + 3400;
+
+    coastToIdleActive = false;
+    coastToIdleUntilMs = 0;
     updateButtonStates();
   }
 }
@@ -363,6 +373,9 @@ function stopEngine() {
   downshiftQueue = [];
   coastToIdleActive = false;
   coastToIdleUntilMs = 0;
+  finalGearHoldActive = false;
+  finalGearHoldUntilMs = 0;
+  finalGearCoastUntilMs = 0;
   gear = 0;
   throttle = 0;
   currentSpeed = 0;
@@ -375,6 +388,9 @@ function setDriveMode(enabled) {
   downshiftQueue = [];
   coastToIdleActive = false;
   coastToIdleUntilMs = 0;
+  finalGearHoldActive = false;
+  finalGearHoldUntilMs = 0;
+  finalGearCoastUntilMs = 0;
   if (driveMode && engineRunning) {
     gear = 1;
     currentSpeed = Math.max(currentSpeed, 8);
@@ -391,6 +407,9 @@ function setAcceleratorPressed(pressed) {
   if (pressed) {
     coastToIdleActive = false;
     coastToIdleUntilMs = 0;
+    finalGearHoldActive = false;
+    finalGearHoldUntilMs = 0;
+    finalGearCoastUntilMs = 0;
   }
   if (!pressed) {
     if (driveMode && gear > 1) startDownshiftSequence();
@@ -444,15 +463,23 @@ function updateVehicleState(timestamp) {
       ? clamp(rollingRpm + throttle * 1500, 1200, 8200)
       : clamp(rollingRpm, 950, 4200);
 
-    // After the final 1st-gear downshift, simulate clutch-in / coast-to-idle.
-    // This prevents the tachometer from hanging around 4.2K RPM after the downshift sequence.
-    if (!acceleratorPressed && !downshiftActive && gear <= 1 && coastToIdleActive) {
-      targetRpm = 1050 + 70 * Math.sin(timestamp / 420);
-      currentSpeed -= 34 * dt;
-      currentSpeed = Math.max(0, currentSpeed);
+    if (!acceleratorPressed && !downshiftActive && gear <= 1 && finalGearHoldActive) {
+      if (timestamp <= finalGearHoldUntilMs) {
+        // Hold around 4.2K for a short engine-braking feel.
+        targetRpm = 4200 + 90 * Math.sin(timestamp / 130);
+        currentSpeed = Math.max(currentSpeed - 5 * dt, 12);
+      } else {
+        // Then coast down smoothly to idle.
+        const coastProgress = clamp((timestamp - finalGearHoldUntilMs) / Math.max(finalGearCoastUntilMs - finalGearHoldUntilMs, 1), 0, 1);
+        const coastTarget = 4200 - coastProgress * 3150;
+        targetRpm = Math.max(1050 + 70 * Math.sin(timestamp / 420), coastTarget);
+        currentSpeed -= 26 * dt;
+        currentSpeed = Math.max(0, currentSpeed);
 
-      if (timestamp > coastToIdleUntilMs || currentSpeed < 8) {
-        coastToIdleActive = false;
+        if (timestamp >= finalGearCoastUntilMs || currentSpeed < 7) {
+          finalGearHoldActive = false;
+          coastToIdleActive = false;
+        }
       }
     }
 
@@ -460,7 +487,7 @@ function updateVehicleState(timestamp) {
       targetRpm = clamp(Math.max(targetRpm, currentRpm + 600), 2500, 8200);
     }
 
-    currentRpm += (targetRpm - currentRpm) * clamp(dt * (downshiftActive || coastToIdleActive ? 5.6 : 4.0), 0, 1);
+    currentRpm += (targetRpm - currentRpm) * clamp(dt * (downshiftActive || finalGearHoldActive ? 5.6 : 4.0), 0, 1);
 
     if (acceleratorPressed && !downshiftActive && currentRpm > 6900 && gear < 6 && timestamp - lastGearShiftMs > 650) {
       gear += 1;
@@ -652,7 +679,9 @@ function applyThemeMode(mode, playSound = false) {
 if (modeToggleBtn) {
   modeToggleBtn.addEventListener("click", () => {
     const isTrack = document.body.classList.contains("track-mode");
-    applyThemeMode(isTrack ? "street" : "track", true);
+    const nextMode = isTrack ? "street" : "track";
+    applyThemeMode(nextMode, true);
+    if (nextMode === "track") playTrackModeRumble();
   });
 }
 
@@ -661,4 +690,69 @@ try {
   applyThemeMode(savedMode === "track" ? "track" : "street");
 } catch (e) {
   applyThemeMode("street");
+}
+
+
+
+/* Track mode engine rumble */
+let trackRumbleCtx = null;
+
+function ensureTrackRumbleAudio() {
+  if (trackRumbleCtx) return trackRumbleCtx;
+  trackRumbleCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return trackRumbleCtx;
+}
+
+async function playTrackModeRumble() {
+  try {
+    const ctx = ensureTrackRumbleAudio();
+    if (ctx.state === "suspended") {
+      await ctx.resume();
+    }
+
+    const now = ctx.currentTime;
+
+    const master = ctx.createGain();
+    master.gain.setValueAtTime(0.0001, now);
+    master.gain.linearRampToValueAtTime(0.24, now + 0.05);
+    master.gain.exponentialRampToValueAtTime(0.0001, now + 0.95);
+    master.connect(ctx.destination);
+
+    const low = ctx.createOscillator();
+    low.type = "sawtooth";
+    low.frequency.setValueAtTime(64, now);
+    low.frequency.exponentialRampToValueAtTime(43, now + 0.9);
+
+    const mid = ctx.createOscillator();
+    mid.type = "triangle";
+    mid.frequency.setValueAtTime(96, now);
+    mid.frequency.exponentialRampToValueAtTime(58, now + 0.9);
+
+    const lowGain = ctx.createGain();
+    lowGain.gain.setValueAtTime(0.20, now);
+    lowGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+
+    const midGain = ctx.createGain();
+    midGain.gain.setValueAtTime(0.09, now);
+    midGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(240, now);
+    filter.frequency.exponentialRampToValueAtTime(140, now + 0.9);
+    filter.Q.value = 0.8;
+
+    low.connect(lowGain);
+    mid.connect(midGain);
+    lowGain.connect(filter);
+    midGain.connect(filter);
+    filter.connect(master);
+
+    low.start(now);
+    mid.start(now);
+    low.stop(now + 0.95);
+    mid.stop(now + 0.95);
+  } catch (e) {
+    // Browser may block audio until a user gesture; ignore silently.
+  }
 }
