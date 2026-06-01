@@ -40,6 +40,8 @@ let downshiftActive = false;
 let downshiftQueue = [];
 let downshiftNextMs = 0;
 let downshiftBlipUntilMs = 0;
+let coastToIdleActive = false;
+let coastToIdleUntilMs = 0;
 
 let audioReady = false;
 let audioCtx = null;
@@ -114,7 +116,7 @@ function updateButtonStates() {
     } else if (!driveMode) {
       rpmNote.textContent = "Neutral mode • hold accelerator for free-rev and release for pops/bangs";
     } else if (downshiftActive) {
-      rpmNote.textContent = "Rev-match downshift active • gears drop one by one with throttle blips and overrun crackles";
+      rpmNote.textContent = "Rev-match downshift active • gears drop one by one with throttle blips, crackles and final coast-to-idle";
     } else {
       rpmNote.textContent = "Drive mode • hold accelerator for rolling pull, turbo spool, upshifts and release for downshift sequence";
     }
@@ -331,6 +333,8 @@ function processDownshiftSequence(timestamp) {
   if (!downshiftQueue.length && timestamp > downshiftNextMs + 450) {
     downshiftActive = false;
     throttle = 0;
+    coastToIdleActive = true;
+    coastToIdleUntilMs = timestamp + 1600;
     updateButtonStates();
   }
 }
@@ -357,6 +361,8 @@ function stopEngine() {
   driveMode = false;
   downshiftActive = false;
   downshiftQueue = [];
+  coastToIdleActive = false;
+  coastToIdleUntilMs = 0;
   gear = 0;
   throttle = 0;
   currentSpeed = 0;
@@ -367,6 +373,8 @@ function setDriveMode(enabled) {
   driveMode = enabled;
   downshiftActive = false;
   downshiftQueue = [];
+  coastToIdleActive = false;
+  coastToIdleUntilMs = 0;
   if (driveMode && engineRunning) {
     gear = 1;
     currentSpeed = Math.max(currentSpeed, 8);
@@ -380,6 +388,10 @@ function setDriveMode(enabled) {
 function setAcceleratorPressed(pressed) {
   if (!engineRunning) return;
   acceleratorPressed = pressed;
+  if (pressed) {
+    coastToIdleActive = false;
+    coastToIdleUntilMs = 0;
+  }
   if (!pressed) {
     if (driveMode && gear > 1) startDownshiftSequence();
     else triggerOverrunPops();
@@ -432,11 +444,23 @@ function updateVehicleState(timestamp) {
       ? clamp(rollingRpm + throttle * 1500, 1200, 8200)
       : clamp(rollingRpm, 950, 4200);
 
+    // After the final 1st-gear downshift, simulate clutch-in / coast-to-idle.
+    // This prevents the tachometer from hanging around 4.2K RPM after the downshift sequence.
+    if (!acceleratorPressed && !downshiftActive && gear <= 1 && coastToIdleActive) {
+      targetRpm = 1050 + 70 * Math.sin(timestamp / 420);
+      currentSpeed -= 34 * dt;
+      currentSpeed = Math.max(0, currentSpeed);
+
+      if (timestamp > coastToIdleUntilMs || currentSpeed < 8) {
+        coastToIdleActive = false;
+      }
+    }
+
     if (downshiftActive && timestamp < downshiftBlipUntilMs) {
       targetRpm = clamp(Math.max(targetRpm, currentRpm + 600), 2500, 8200);
     }
 
-    currentRpm += (targetRpm - currentRpm) * clamp(dt * (downshiftActive ? 5.6 : 4.0), 0, 1);
+    currentRpm += (targetRpm - currentRpm) * clamp(dt * (downshiftActive || coastToIdleActive ? 5.6 : 4.0), 0, 1);
 
     if (acceleratorPressed && !downshiftActive && currentRpm > 6900 && gear < 6 && timestamp - lastGearShiftMs > 650) {
       gear += 1;
@@ -538,3 +562,103 @@ function animationLoop(timestamp) {
 
 updateButtonStates();
 requestAnimationFrame(animationLoop);
+
+
+
+
+const modeToggleBtn = document.getElementById("modeToggleBtn");
+let themeAudioCtx = null;
+
+function ensureThemeAudio() {
+  if (themeAudioCtx) return themeAudioCtx;
+  themeAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return themeAudioCtx;
+}
+
+async function playTrackModeRumble() {
+  try {
+    const ctx = ensureThemeAudio();
+    if (ctx.state === "suspended") {
+      await ctx.resume();
+    }
+
+    const now = ctx.currentTime;
+    const master = ctx.createGain();
+    master.gain.setValueAtTime(0.0001, now);
+    master.gain.linearRampToValueAtTime(0.20, now + 0.05);
+    master.gain.exponentialRampToValueAtTime(0.0001, now + 0.85);
+    master.connect(ctx.destination);
+
+    const low = ctx.createOscillator();
+    low.type = "sawtooth";
+    low.frequency.setValueAtTime(56, now);
+    low.frequency.exponentialRampToValueAtTime(42, now + 0.82);
+
+    const mid = ctx.createOscillator();
+    mid.type = "triangle";
+    mid.frequency.setValueAtTime(84, now);
+    mid.frequency.exponentialRampToValueAtTime(62, now + 0.82);
+
+    const lowGain = ctx.createGain();
+    lowGain.gain.setValueAtTime(0.18, now);
+    lowGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.82);
+
+    const midGain = ctx.createGain();
+    midGain.gain.setValueAtTime(0.10, now);
+    midGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.82);
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(220, now);
+    filter.Q.value = 0.9;
+
+    low.connect(lowGain);
+    mid.connect(midGain);
+    lowGain.connect(filter);
+    midGain.connect(filter);
+    filter.connect(master);
+
+    low.start(now);
+    mid.start(now);
+    low.stop(now + 0.85);
+    mid.stop(now + 0.85);
+  } catch (e) {
+    // ignore audio errors
+  }
+}
+
+function updateModeToggleLabel(isTrack) {
+  if (!modeToggleBtn) return;
+  modeToggleBtn.textContent = isTrack ? "Street Mode" : "Track Mode";
+  modeToggleBtn.setAttribute("aria-label", isTrack ? "Switch to Street Mode" : "Switch to Track Mode");
+  modeToggleBtn.setAttribute("title", isTrack ? "Switch to Street Mode" : "Switch to Track Mode");
+}
+
+function applyThemeMode(mode, playSound = false) {
+  const isTrack = mode === "track";
+  const wasTrack = document.body.classList.contains("track-mode");
+  document.body.classList.toggle("track-mode", isTrack);
+  updateModeToggleLabel(isTrack);
+
+  try {
+    localStorage.setItem("portfolioThemeMode", mode);
+  } catch (e) {}
+
+  if (playSound && isTrack && !wasTrack) {
+    playTrackModeRumble();
+  }
+}
+
+if (modeToggleBtn) {
+  modeToggleBtn.addEventListener("click", () => {
+    const isTrack = document.body.classList.contains("track-mode");
+    applyThemeMode(isTrack ? "street" : "track", true);
+  });
+}
+
+try {
+  const savedMode = localStorage.getItem("portfolioThemeMode");
+  applyThemeMode(savedMode === "track" ? "track" : "street");
+} catch (e) {
+  applyThemeMode("street");
+}
