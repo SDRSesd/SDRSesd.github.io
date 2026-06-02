@@ -265,23 +265,40 @@ function updateAudio(rpm) {
   turboGain.gain.setTargetAtTime(spoolFactor * 0.16, now, 0.06);
 }
 
-function makePopBang(strength = 1) {
+function makePopBang(strength = 1, character = "mixed") {
   if (!audioReady || !audioCtx || !audioEnabled || !engineRunning) return;
 
   const now = audioCtx.currentTime;
-  const duration = 0.12 + Math.random() * 0.11;
+
+  const typeRoll = Math.random();
+  const isDeepBang = character === "deep" || typeRoll < 0.22;
+  const isSharpCrack = character === "sharp" || typeRoll > 0.68;
+
+  const duration = isDeepBang
+    ? 0.18 + Math.random() * 0.16
+    : 0.07 + Math.random() * 0.13;
 
   const popSource = audioCtx.createBufferSource();
-  popSource.buffer = createNoiseBuffer(audioCtx, 0.25);
+  popSource.buffer = createNoiseBuffer(audioCtx, 0.35);
 
   const popFilter = audioCtx.createBiquadFilter();
-  popFilter.type = "bandpass";
-  popFilter.frequency.value = 850 + Math.random() * 1800;
-  popFilter.Q.value = 0.9 + Math.random() * 2.1;
+  popFilter.type = isDeepBang ? "lowpass" : "bandpass";
+  popFilter.frequency.value = isDeepBang
+    ? 280 + Math.random() * 260
+    : 900 + Math.random() * 2600;
+  popFilter.Q.value = isSharpCrack
+    ? 2.2 + Math.random() * 2.5
+    : 0.8 + Math.random() * 1.4;
 
   const popGain = audioCtx.createGain();
+  const peak = isDeepBang
+    ? 0.20 * strength
+    : isSharpCrack
+    ? 0.15 * strength
+    : 0.12 * strength;
+
   popGain.gain.setValueAtTime(0.0001, now);
-  popGain.gain.linearRampToValueAtTime(0.18 * strength, now + 0.008);
+  popGain.gain.linearRampToValueAtTime(peak, now + 0.004 + Math.random() * 0.006);
   popGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
 
   popSource.connect(popFilter);
@@ -289,32 +306,92 @@ function makePopBang(strength = 1) {
   popGain.connect(masterGain);
 
   popSource.start(now);
-  popSource.stop(now + duration + 0.02);
+  popSource.stop(now + duration + 0.04);
 
-  const crack = audioCtx.createOscillator();
-  const crackGain = audioCtx.createGain();
+  if (isDeepBang || Math.random() < 0.35) {
+    const boom = audioCtx.createOscillator();
+    const boomGain = audioCtx.createGain();
 
-  crack.type = "square";
-  crack.frequency.setValueAtTime(150 + Math.random() * 140, now);
+    boom.type = "sine";
+    boom.frequency.setValueAtTime(70 + Math.random() * 55, now);
+    boom.frequency.exponentialRampToValueAtTime(42 + Math.random() * 20, now + 0.18);
 
-  crackGain.gain.setValueAtTime(0.0001, now);
-  crackGain.gain.linearRampToValueAtTime(0.060 * strength, now + 0.005);
-  crackGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.075);
+    boomGain.gain.setValueAtTime(0.0001, now);
+    boomGain.gain.linearRampToValueAtTime(0.055 * strength, now + 0.012);
+    boomGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
 
-  crack.connect(crackGain);
-  crackGain.connect(masterGain);
+    boom.connect(boomGain);
+    boomGain.connect(masterGain);
 
-  crack.start(now);
-  crack.stop(now + 0.09);
+    boom.start(now);
+    boom.stop(now + 0.24);
+  }
+
+  if (isSharpCrack || Math.random() < 0.45) {
+    const crack = audioCtx.createOscillator();
+    const crackGain = audioCtx.createGain();
+
+    crack.type = Math.random() > 0.5 ? "square" : "sawtooth";
+    crack.frequency.setValueAtTime(150 + Math.random() * 320, now);
+
+    crackGain.gain.setValueAtTime(0.0001, now);
+    crackGain.gain.linearRampToValueAtTime(0.040 * strength, now + 0.004);
+    crackGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.045 + Math.random() * 0.06);
+
+    crack.connect(crackGain);
+    crackGain.connect(masterGain);
+
+    crack.start(now);
+    crack.stop(now + 0.12);
+  }
 }
 
 function triggerOverrunPops(strength = 1) {
   if (!audioEnabled || !engineRunning) return;
 
-  const count = driveMode ? 3 : 2;
+  // More natural burst: sometimes short, sometimes aggressive.
+  const rpmFactor = clamp((currentRpm - 2200) / 5200, 0.35, 1.35);
+  const gearFactor = driveMode ? clamp(gear / 6, 0.45, 1.1) : 0.75;
+
+  const count = driveMode
+    ? 2 + Math.floor(Math.random() * 4)
+    : 1 + Math.floor(Math.random() * 3);
+
+  let delay = 0;
 
   for (let i = 0; i < count; i += 1) {
-    setTimeout(() => makePopBang(strength + Math.random() * 0.30), i * (90 + Math.random() * 60));
+    const randomGap = 55 + Math.random() * 155;
+    delay += randomGap;
+
+    const hitStrength =
+      strength *
+      rpmFactor *
+      gearFactor *
+      (0.65 + Math.random() * 0.75);
+
+    const characterRoll = Math.random();
+    const character =
+      characterRoll < 0.25 ? "deep" :
+      characterRoll > 0.72 ? "sharp" :
+      "mixed";
+
+    setTimeout(() => {
+      makePopBang(hitStrength, character);
+
+      // Occasional double-pop very close together.
+      if (Math.random() < 0.32) {
+        setTimeout(() => {
+          makePopBang(hitStrength * (0.55 + Math.random() * 0.45), "sharp");
+        }, 28 + Math.random() * 55);
+      }
+    }, delay);
+  }
+
+  // Rare final after-crackle, like fuel cut / overrun tail.
+  if (Math.random() < 0.38) {
+    setTimeout(() => {
+      makePopBang(strength * 0.45, "sharp");
+    }, delay + 180 + Math.random() * 240);
   }
 }
 
