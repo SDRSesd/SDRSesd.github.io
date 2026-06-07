@@ -26,6 +26,15 @@ This version combines two themes in one coherent portfolio style:
 - `script.js` - navigation toggle and footer year
 - `assets/` - images and background visuals
 
+- CARLA Python API based scenario runner
+- Ego vehicle spawn and control workflow
+- Obstacle / pedestrian scenario setup
+- Weather and environment configuration
+- Runtime telemetry capture
+- CSV evidence generation
+- Basic pass/fail evaluation
+- Modular Python scenario structure
+
 ## Notes
 
 Update the GitHub link or email in `index.html` if needed before publishing.
