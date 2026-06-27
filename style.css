@@ -3774,3 +3774,54 @@ canvas {
     width: 100%;
   }
 }
+
+/* =========================================================
+   FOOTER LOGO
+   ========================================================= */
+
+.site-footer {
+  margin-top: 64px;
+  padding: 32px 20px 40px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(circle at center, rgba(255, 0, 0, 0.08) 0%, rgba(255, 0, 0, 0) 55%),
+    linear-gradient(180deg, rgba(8, 10, 20, 0.96) 0%, rgba(5, 6, 14, 1) 100%);
+  display: flex;
+  justify-content: center;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.footer-logo {
+  width: min(420px, 82vw);
+  height: auto;
+  display: block;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 0 14px rgba(255, 0, 0, 0.16))
+    drop-shadow(0 0 34px rgba(255, 0, 0, 0.10));
+  opacity: 0.98;
+}
+
+.footer-copy {
+  margin-top: 14px;
+  font-size: 0.92rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+@media (max-width: 768px) {
+  .site-footer {
+    margin-top: 48px;
+    padding: 28px 16px 34px;
+  }
+
+  .footer-copy {
+    font-size: 0.82rem;
+  }
+}
