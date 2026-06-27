@@ -3831,15 +3831,18 @@ canvas {
    ========================================================= */
 
 .brand-logo-wrap {
-  gap: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .header-brand-logo {
-  width: 118px;
-  height: 58px;
-  object-fit: contain;
+  width: 132px;
+  height: 60px;
+  object-fit: cover;
+  object-position: center;
   display: block;
-  border-radius: 12px;
+  border-radius: 14px;
   background: rgba(255, 255, 255, 0.03);
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.08),
@@ -3847,33 +3850,11 @@ canvas {
     0 0 18px rgba(255, 59, 48, 0.16);
 }
 
-.brand-logo-wrap .brand-title {
-  color: #ffffff;
-  font-size: 1.08rem;
-  letter-spacing: 0.01em;
-}
-
-.brand-logo-wrap .brand-subtitle {
-  color: rgba(255, 255, 255, 0.58);
-}
-
 /* Mobile header logo */
 @media (max-width: 720px) {
   .header-brand-logo {
-    width: 92px;
+    width: 104px;
     height: 48px;
-    border-radius: 10px;
-  }
-
-  .brand-logo-wrap {
-    gap: 10px;
-  }
-
-  .brand-logo-wrap .brand-title {
-    font-size: 0.98rem;
-  }
-
-  .brand-logo-wrap .brand-subtitle {
-    font-size: 0.68rem;
+    border-radius: 11px;
   }
 }
