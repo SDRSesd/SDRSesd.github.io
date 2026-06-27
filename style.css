@@ -3831,72 +3831,39 @@ canvas {
    ========================================================= */
 
 .brand-logo-wrap {
-  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 10px;
-  border-radius: 20px;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(255, 59, 48, 0.22), transparent 62%),
-    linear-gradient(180deg, rgba(22, 24, 31, 0.96), rgba(8, 9, 14, 0.98));
-  border: 1px solid rgba(255, 59, 48, 0.22);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 14px 34px rgba(0, 0, 0, 0.34),
-    0 0 34px rgba(255, 59, 48, 0.16);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
 }
 
-.brand-logo-wrap::before {
-  content: "";
-  position: absolute;
-  inset: -40%;
-  background:
-    radial-gradient(circle at 30% 50%, rgba(255, 59, 48, 0.28), transparent 34%),
-    radial-gradient(circle at 75% 40%, rgba(255, 255, 255, 0.08), transparent 28%);
-  filter: blur(12px);
-  opacity: 0.9;
-  pointer-events: none;
-}
-
+.brand-logo-wrap::before,
 .brand-logo-wrap::after {
-  content: "";
-  position: absolute;
-  left: 12%;
-  right: 12%;
-  bottom: 4px;
-  height: 2px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, rgba(255, 59, 48, 0.85), transparent);
-  box-shadow: 0 0 14px rgba(255, 59, 48, 0.55);
-  pointer-events: none;
+  display: none;
 }
 
 .header-brand-logo {
-  position: relative;
-  z-index: 1;
-  width: 156px;
-  height: 58px;
-  object-fit: cover;
-  object-position: center;
+  width: 150px;
+  height: auto;
   display: block;
-  border-radius: 14px;
+  object-fit: contain;
+  object-position: center;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
   filter:
-    drop-shadow(0 0 10px rgba(255, 59, 48, 0.20))
-    drop-shadow(0 8px 18px rgba(0, 0, 0, 0.36));
+    drop-shadow(0 0 10px rgba(255, 59, 48, 0.22))
+    drop-shadow(0 8px 18px rgba(0, 0, 0, 0.34));
 }
 
 /* Mobile header logo */
 @media (max-width: 720px) {
-  .brand-logo-wrap {
-    padding: 6px 8px;
-    border-radius: 16px;
-  }
-
   .header-brand-logo {
-    width: 108px;
-    height: 46px;
-    border-radius: 11px;
+    width: 112px;
   }
 }
