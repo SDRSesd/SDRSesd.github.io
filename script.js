@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2026 S.Shivadurgarajasekar
+ * All rights reserved.
+ *
+ * This file contains original portfolio interaction logic including
+ * menu behavior, RPM meter behavior, engine/audio interaction,
+ * drive mode behavior, throttle behavior, rev-match/downshift logic,
+ * and UI control behavior.
+ *
+ * Public access is provided for portfolio review and recruitment evaluation only.
+ * Unauthorized copying, reuse, redistribution, cloning, commercial use,
+ * or ownership claims are not permitted without written permission.
+ */
+
 const menuToggle = document.getElementById("menuToggle");
 const navLinks = document.getElementById("navLinks");
 
