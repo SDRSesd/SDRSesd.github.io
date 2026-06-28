@@ -3931,3 +3931,40 @@ canvas {
     width: 100%;
   }
 }
+
+/* =========================================================
+   SECURE CONTACT PANEL - STREET/TRACK COLOR FIX
+   ========================================================= */
+
+.contact-form-panel.secure-contact-panel {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 59, 48, 0.12), transparent 34%),
+    linear-gradient(180deg, rgba(18, 20, 28, 0.98), rgba(8, 9, 14, 0.99)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.34),
+    0 0 34px rgba(255, 59, 48, 0.10);
+}
+
+.contact-form-panel.secure-contact-panel .secure-contact-card h3 {
+  color: #ffffff !important;
+}
+
+.contact-form-panel.secure-contact-panel .secure-contact-card p {
+  color: rgba(255, 255, 255, 0.74) !important;
+}
+
+.contact-form-panel.secure-contact-panel .secure-contact-label {
+  color: #ff3b30 !important;
+}
+
+.contact-form-panel.secure-contact-panel .secure-contact-note {
+  color: rgba(255, 255, 255, 0.58) !important;
+}
+
+.contact-form-panel.secure-contact-panel .btn.secondary {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.05);
+}
